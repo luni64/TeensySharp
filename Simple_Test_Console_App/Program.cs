@@ -12,7 +12,7 @@ namespace SimpleTestApp
             string file1 = "blink_slow.hex";
             string file2 = "blink_fast.hex";
 
-            string testfile = file1;
+            string testfile = file2;
 
             // Define the board to be programmed (all boards are implemented but currently only Teensy 3.1 is tested) 
             var Board = PJRC_Board.Teensy_31;
