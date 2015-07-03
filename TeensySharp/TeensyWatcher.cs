@@ -5,7 +5,7 @@ using System.Management;
 
 namespace TeensySharp
 {
-
+    // Just specializing the UsbWatcher Class to the PJRC VID and the Teensy Serial PID
     public class TeensyWatcher : UsbWatcher
     {
         public TeensyWatcher()
