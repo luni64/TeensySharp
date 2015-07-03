@@ -8,21 +8,11 @@ namespace SimpleTestApp
     {
         static void Main(string[] args)
         {
-            var w = new TeensyWatcher();
-
-            Console.WriteLine("Found {0} Teensies", w.ConnectedDevices.Count);
-            foreach (var device in w.ConnectedDevices)
-            {
-                Console.WriteLine("SN: {0}, PORT: {1}", device.Serialnumber, device.Port);
-            }
-
-
-
             // Two test files 
             string file1 = "blink_slow.hex";
             string file2 = "blink_fast.hex";
 
-            string testfile = file2;
+            string testfile = file1;
 
             // Define the board to be programmed (all boards are implemented but currently only Teensy 3.1 is tested) 
             var Board = PJRC_Board.Teensy_31;

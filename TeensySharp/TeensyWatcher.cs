@@ -9,7 +9,7 @@ namespace TeensySharp
     public class TeensyWatcher : UsbWatcher
     {
         public TeensyWatcher()
-            : base("16C0", "0483") 
+            : base("16C0", "0483")
         { }
     }
 
@@ -32,21 +32,6 @@ namespace TeensySharp
             ConnectedDevices = new List<USB_Serial_Device>();
 
             // look for already connected boards and add them to list
-
-
-            using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_USBControllerDevice"))
-            {
-                string res = "";
-
-                foreach (var mgmtObject in searcher.Get())
-                {
-                    var s = mgmtObject.Properties;
-                    res += mgmtObject["Dependent"] + "\n";
-                    res += mgmtObject["Antecedent"] + "\n"; 
-                }
-            }
-
-
             using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_SerialPort"))
             {
                 foreach (var mgmtObject in searcher.Get())
@@ -58,13 +43,11 @@ namespace TeensySharp
                     }
                 }
             }
-
             StartWatching();
         }
 
         public void Dispose()
         {
-            Console.WriteLine("---------DISPOSE UsbSerialPortWatcher -----------");
             StopWatching();
         }
 
@@ -77,7 +60,7 @@ namespace TeensySharp
 
         protected void StartWatching()
         {
-            StopWatching();
+            StopWatching(); // Just to make sure 
 
             DeleteWatcher = new ManagementEventWatcher
             {
@@ -85,7 +68,7 @@ namespace TeensySharp
                 {
                     EventClassName = "__InstanceDeletionEvent",
                     Condition = "TargetInstance ISA 'Win32_SerialPort'",
-                    WithinInterval = new TimeSpan(0, 0, 1),
+                    WithinInterval = new TimeSpan(0, 0, 1), //Todo: make the interval settable
                 },
             };
             DeleteWatcher.EventArrived += PortsChanged;
@@ -97,7 +80,7 @@ namespace TeensySharp
                 {
                     EventClassName = "__InstanceCreationEvent",
                     Condition = "TargetInstance ISA 'Win32_SerialPort'",
-                    WithinInterval = new TimeSpan(0, 0, 1),
+                    WithinInterval = new TimeSpan(0, 0, 1), //Todo: make the interval settable
                 },
             };
             CreateWatcher.EventArrived += PortsChanged;
@@ -125,7 +108,7 @@ namespace TeensySharp
             add,
             remove
         }
-        
+
         void PortsChanged(object sender, EventArrivedEventArgs e)
         {
             var device = MakeDevice((ManagementBaseObject)e.NewEvent["TargetInstance"], PORT_HWID);
@@ -146,7 +129,7 @@ namespace TeensySharp
                 }
             }
         }
-        
+
         #endregion
 
         #region Helpers
@@ -159,7 +142,7 @@ namespace TeensySharp
             {
                 string port = (string)mgmtObj["DeviceID"];
                 var SN = (PnPDeviceID.Split(new string[] { "\\" }, StringSplitOptions.None)).Last();
-                return new USB_Serial_Device { Port = port, Serialnumber = SN };
+                return new USB_Serial_Device { Port = port, Serialnumber = SN }; //todo: what if no serialnumber given?
             }
             return null;
         }
@@ -167,7 +150,7 @@ namespace TeensySharp
         #endregion
 
         #region EventHandler --------------------------------------------------------
-        
+
         protected void OnConnectionChanged(ChangeType type, USB_Serial_Device changedDevice)
         {
             if (ConnectionChanged != null) ConnectionChanged(this, new ConnectionChangedEventArgs(type, changedDevice));

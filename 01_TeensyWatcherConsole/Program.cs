@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Ports;
 using System.Linq;
+using System.Threading;
 using TeensySharp;
 
 namespace TeensyWatcherConsole
@@ -27,7 +28,7 @@ namespace TeensyWatcherConsole
                 using (var Com = new SerialPort(myTeensy.Port))
                 {
                     // lets talk to our Teensy: 
-                    Com.Open(); 
+                    Com.Open();
                     Com.WriteLine("Hello Teensy");
                     Com.Close();
                 }
@@ -39,6 +40,7 @@ namespace TeensyWatcherConsole
             // CleanUp 
             Watcher.ConnectionChanged -= ConnectedTeensiesChanged;
             Watcher.Dispose();
+
         }
 
         //-------------------------------------------------------------------------------------------------------------------
@@ -54,10 +56,10 @@ namespace TeensyWatcherConsole
             Console.WriteLine("\n-----------------------------------------------------------------");
             Console.WriteLine("The Teensy with Serialnumber {0} was {1} Port {2}", SN, changeText, Port);
 
-            
+
             // Just for fun show the list of currently connected Teensies
             Console.WriteLine("\nCurrently the following Teensies are connected:");
-            
+
             var Watcher = (TeensyWatcher)sender;
             foreach (var Teensy in Watcher.ConnectedDevices)
             {
