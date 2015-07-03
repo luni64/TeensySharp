@@ -7,8 +7,6 @@ This library provides some helper classes for C# Windows applications which comm
 #Build
 TeensySharp was developed with Microsoft VisualStudio 2013 Community Edition. The correspondig .sln file is contained in the repo. The library depends on the HIDLibrary from Mike O'Brian which can be found here: [https://github.com/mikeobrien/HidLibrary](https://github.com/mikeobrien/HidLibrary) and on MoreLinq ([https://code.google.com/p/morelinq/](https://code.google.com/p/morelinq/)). Both are available via NuGet. A download of the binaries from NuGet should start automatically when you build the solution. 
 
-The solution also includes the following two demo console applications showing the application of the classes.
-
 ##Documentation
 ###class TeensyWatcher
 To obtain a list of currently connected Teensies you can do the following
