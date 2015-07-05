@@ -6,11 +6,11 @@ using System.Management;
 namespace TeensySharp
 {
     public class TeensyWatcher : IDisposable
-    {
+    { 
         const uint vid = 0x16C0;
         const uint serPid = 0x483;
         const uint halfKayPid = 0x478;
-        string vidStr = "'%USB_VID[_]" + vid.ToString("X") + "%'";
+        string vidStr = "'%USB_VID[_]"  + vid.ToString("X") + "%'";
 
         #region Properties and Events -----------------------------------------------
 
