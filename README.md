@@ -33,7 +33,7 @@ void ConnectedTeensiesChanged(object sender, ConnectionChangedEventArgs e)
 The repo contains a simple console application (*TeensyWacherConsole*) which demomstrates the use of the *TeensyWatcher* class.
 ##Firmware Uploading
 ###class SharpHexParser
-The static *SharpHexParser* class is used to parse a stream containing an Intel HEX file and copy the result,i.e. the firmware into a flash image file (which is a simple byte array). To generate an empty flash image with the correct size you can call a member of the SharpUploader as shown in the following code snippet. (*PJRC_Board* is an enum containing definitions for all PJRC Teensy Boards)
+The static *SharpHexParser* class is used to parse a stream containing an Intel HEX file and copy the result,i.e. the firmware into a flash image (which is a simple byte array). To generate an empty flash image with the correct size you can call a member of the SharpUploader as shown in the following code snippet. (*PJRC_Board* is an enum containing definitions for all PJRC Teensy Boards)
 
 ```c#
 var Board = PJRC_Board.Teensy_31; 
