@@ -2,6 +2,7 @@
 using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 
@@ -20,12 +21,38 @@ namespace TeensySharp
     {
         #region Public Methods ----------------------------------------------------------------------------------
 
-        public static int Upload(byte[] Image, PJRC_Board board, bool reboot = true)
+
+        static HidDevice GetDeviceFromSerialnumber(string Serialnumber)
+        {
+            var devices = HidDevices.Enumerate(0x16C0, 0x0478);
+            var device = Serialnumber == "" ? devices.FirstOrDefault() : devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber);
+
+            if (device == null)
+            {
+                StartHalfKay(Serialnumber);
+                DateTime start = DateTime.Now;
+                while (DateTime.Now - start < TimeSpan.FromSeconds(5))
+                {
+                    devices = HidDevices.Enumerate(0x16C0, 0x0478);
+                //    var device = Serialnumber == "" ? devices.FirstOrDefault() : devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber);
+
+                }
+            }
+
+            return device;
+        }
+
+        public static int Upload(byte[] Image, PJRC_Board board, string Serialnumber = "", bool reboot = true)
         {
             var BoardDef = BoardDefinitions[board];
 
-            var device = HidDevices.Enumerate(0x16C0, 0x0478).FirstOrDefault(); //todo: handle that more intelligently
-            if (device == null) return 1;
+            var devices = HidDevices.Enumerate(0x16C0, 0x0478);
+            var device = Serialnumber == "" ? devices.FirstOrDefault() : devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber);
+
+            if (device == null)
+            {
+                StartHalfKay(Serialnumber);
+            }
 
             int addr = 0;
             foreach (var dataBlock in Image.Batch(BoardDef.BlockSize))
@@ -57,12 +84,31 @@ namespace TeensySharp
             }
 
             return 0;
-        }        
-              
+        }
+
         public static byte[] GetEmptyFlashImage(PJRC_Board board)
         {
             int FlashSize = BoardDefinitions[board].FlashSize;
             return Enumerable.Repeat((byte)0xFF, FlashSize).ToArray();
+        }
+
+        public static bool StartHalfKay(string Serialnumber)
+        {
+            //using (var watcher = new TeensyWatcher())
+            //{
+            //    var Teensy = watcher.ConnectedDevices.FirstOrDefault(d => d.Serialnumber == Serialnumber);
+            //    if (Teensy == null) return false;
+
+            //    using (var port = new SerialPort(Teensy.Port))
+            //    {
+            //        port.Open();
+            //        int previousBR = port.BaudRate;
+            //        port.BaudRate = 134;
+            //        port.BaudRate = previousBR;
+            //        port.Close();
+            //    }
+            //}
+            return true;
         }
 
         #endregion
@@ -83,12 +129,21 @@ namespace TeensySharp
             return report;
         }
 
+        static string GetSerialNumber(HidDevice device)
+        {
+            byte[] sn;
+            device.ReadSerialNumber(out sn);
+
+            string snString = System.Text.Encoding.Unicode.GetString(sn).TrimEnd("\0".ToArray());
+            return (Convert.ToUInt32(snString, 16) * 10).ToString();
+        }
+
         /// <summary>
         /// Upload charactaristics for the PJRC boards as defined in Pauls "teensy_loader_cli.c" https://github.com/PaulStoffregen/teensy_loader_cli/blob/master/teensy_loader_cli.c
         /// The AddrCopy Action is used to copy the address bytes to the report         
         /// Currently only Teensy3.1 was tested, please inform if you find any errors on the other boards
         /// </summary>
-        private static  Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
+        private static Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
         {    
             {PJRC_Board.Teensy_31, new BoardDefinition 
             {

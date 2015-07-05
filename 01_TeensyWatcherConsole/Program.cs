@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.IO.Ports;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using TeensySharp;
 
@@ -17,13 +20,17 @@ namespace TeensyWatcherConsole
             Console.WriteLine("Currently the following Teensies are connected:");
             foreach (var Teensy in Watcher.ConnectedDevices)
             {
-                Console.WriteLine("Serialnumber {0}, on Port {1}", Teensy.Serialnumber, Teensy.Port);
+                if (Teensy.Type == USB_Device.type.UsbSerial)
+                {
+                    Console.WriteLine("USBSerial: Serialnumber {0}, on {1}", Teensy.Serialnumber, Teensy.Port);
+                }
+                else Console.WriteLine("HalfKay: Serialnumber {0}", Teensy.Serialnumber);
             }
 
             // Here is a good place to construct a SerialPort Object
             // for the sake of simplicity lets take the first one from the list
             var myTeensy = Watcher.ConnectedDevices.FirstOrDefault();
-            if (myTeensy != null)
+            if (myTeensy != null && myTeensy.Type == USB_Device.type.UsbSerial)
             {
                 using (var Com = new SerialPort(myTeensy.Port))
                 {
@@ -40,7 +47,6 @@ namespace TeensyWatcherConsole
             // CleanUp 
             Watcher.ConnectionChanged -= ConnectedTeensiesChanged;
             Watcher.Dispose();
-
         }
 
         //-------------------------------------------------------------------------------------------------------------------
@@ -48,26 +54,34 @@ namespace TeensyWatcherConsole
         //
         static void ConnectedTeensiesChanged(object sender, ConnectionChangedEventArgs e)
         {
-            // Write information about the added or removed Teensy to the console
-            string Port = e.changedDevice.Port;
-            string SN = e.changedDevice.Serialnumber;
-            string changeText = e.changeType == UsbWatcher.ChangeType.add ? "added to" : "removed from";
+            // Write information about the added or removed Teensy to the console         
 
-            Console.WriteLine("\n-----------------------------------------------------------------");
-            Console.WriteLine("The Teensy with Serialnumber {0} was {1} Port {2}", SN, changeText, Port);
+            USB_Device Teensy = e.changedDevice;
 
-
-            // Just for fun show the list of currently connected Teensies
-            Console.WriteLine("\nCurrently the following Teensies are connected:");
-
-            var Watcher = (TeensyWatcher)sender;
-            foreach (var Teensy in Watcher.ConnectedDevices)
+            switch (Teensy.Type)
             {
-                Console.WriteLine("- Serialnumber {0}, on Port {1}", Teensy.Serialnumber, Teensy.Port);
-            }
-            Console.WriteLine("--------------------------------------------------------------------");
+                case USB_Device.type.HalfKay:
+                    if (e.changeType == TeensyWatcher.ChangeType.add)
+                    {
+                        Console.WriteLine("Teensy {0} running HalfKay", Teensy.Serialnumber);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Teensy {0} removed", Teensy.Serialnumber);
+                    }
+                    break;
 
-            Console.WriteLine("\n\nPress any key to exit\n");
+                case USB_Device.type.UsbSerial:
+                    if (e.changeType == TeensyWatcher.ChangeType.add)
+                    {
+                        Console.WriteLine("Teensy {0} connected on {1}", Teensy.Serialnumber, Teensy.Port);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Teensy {0} removed from {1}", Teensy.Serialnumber, Teensy.Port);
+                    }
+                    break;
+            }
         }
     }
 }

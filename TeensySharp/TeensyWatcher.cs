@@ -5,38 +5,31 @@ using System.Management;
 
 namespace TeensySharp
 {
-    // Just specializing the UsbWatcher Class to the PJRC VID and the Teensy Serial PID
-    public class TeensyWatcher : UsbWatcher
+    public class TeensyWatcher : IDisposable
     {
-        public TeensyWatcher()
-            : base("16C0", "0483")
-        { }
-    }
+        const uint vid = 0x16C0;
+        const uint serPid = 0x483;
+        const uint halfKayPid = 0x478;
+        string vidStr = "'%USB_VID[_]" + vid.ToString("X") + "%'";
 
-
-    public class UsbWatcher : IDisposable
-    {
         #region Properties and Events -----------------------------------------------
 
-        public List<USB_Serial_Device> ConnectedDevices { get; private set; }
+        public List<USB_Device> ConnectedDevices { get; private set; }
         public event EventHandler<ConnectionChangedEventArgs> ConnectionChanged;
 
         #endregion
 
         #region Construction / Destruction ------------------------------------------
 
-        public UsbWatcher(string vid, string pid)
+        public TeensyWatcher()
         {
-            PORT_HWID = @"USB\VID_" + vid + "&PID_" + pid;
+            ConnectedDevices = new List<USB_Device>();
 
-            ConnectedDevices = new List<USB_Serial_Device>();
-
-            // look for already connected boards and add them to list
-            using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_SerialPort"))
+            using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE " + vidStr))
             {
                 foreach (var mgmtObject in searcher.Get())
                 {
-                    var device = MakeDevice(mgmtObject, PORT_HWID);
+                    var device = MakeDevice(mgmtObject);
                     if (device != null)
                     {
                         ConnectedDevices.Add(device);
@@ -67,7 +60,7 @@ namespace TeensySharp
                 Query = new WqlEventQuery
                 {
                     EventClassName = "__InstanceDeletionEvent",
-                    Condition = "TargetInstance ISA 'Win32_SerialPort'",
+                    Condition = "TargetInstance ISA 'Win32_PnPEntity'",
                     WithinInterval = new TimeSpan(0, 0, 1), //Todo: make the interval settable
                 },
             };
@@ -79,7 +72,7 @@ namespace TeensySharp
                 Query = new WqlEventQuery
                 {
                     EventClassName = "__InstanceCreationEvent",
-                    Condition = "TargetInstance ISA 'Win32_SerialPort'",
+                    Condition = "TargetInstance ISA 'Win32_PnPEntity'",
                     WithinInterval = new TimeSpan(0, 0, 1), //Todo: make the interval settable
                 },
             };
@@ -101,8 +94,6 @@ namespace TeensySharp
             }
         }
 
-        private string PORT_HWID;
-
         public enum ChangeType
         {
             add,
@@ -111,7 +102,7 @@ namespace TeensySharp
 
         void PortsChanged(object sender, EventArrivedEventArgs e)
         {
-            var device = MakeDevice((ManagementBaseObject)e.NewEvent["TargetInstance"], PORT_HWID);
+            var device = MakeDevice((ManagementBaseObject)e.NewEvent["TargetInstance"]);
             if (device != null)
             {
                 ChangeType type = e.NewEvent.ClassPath.ClassName == "__InstanceCreationEvent" ? ChangeType.add : ChangeType.remove;
@@ -134,15 +125,37 @@ namespace TeensySharp
 
         #region Helpers
 
-        protected USB_Serial_Device MakeDevice(ManagementBaseObject mgmtObj, string ID)
+        protected USB_Device MakeDevice(ManagementBaseObject mgmtObj)
         {
-            var PnPDeviceID = (string)mgmtObj["PNPDeviceID"];
+            var DeviceIdParts = ((string)mgmtObj["PNPDeviceID"]).Split("\\".ToArray());
 
-            if (PnPDeviceID.StartsWith(ID))
+            if (DeviceIdParts[0] != "USB") return null;
+
+            int start = DeviceIdParts[1].IndexOf("PID_") + 4;
+            uint pid = Convert.ToUInt32(DeviceIdParts[1].Substring(start, 4), 16);
+
+            if (pid == serPid)
             {
-                string port = (string)mgmtObj["DeviceID"];
-                var SN = (PnPDeviceID.Split(new string[] { "\\" }, StringSplitOptions.None)).Last();
-                return new USB_Serial_Device { Port = port, Serialnumber = SN }; //todo: what if no serialnumber given?
+                uint serNum = Convert.ToUInt32(DeviceIdParts[2]);
+                string port = (((string)mgmtObj["Caption"]).Split("()".ToArray()))[1];
+
+                return new USB_Device
+                {
+                    Type = USB_Device.type.UsbSerial,
+                    Port = port,
+                    Serialnumber = serNum
+                };
+            }
+            else if (pid == halfKayPid)
+            {
+                uint serNum = Convert.ToUInt32(DeviceIdParts[2], 16) * 10;
+
+                return new USB_Device
+                {
+                    Type = USB_Device.type.HalfKay,
+                    Port = "",
+                    Serialnumber = serNum,
+                };
             }
             return null;
         }
@@ -151,7 +164,7 @@ namespace TeensySharp
 
         #region EventHandler --------------------------------------------------------
 
-        protected void OnConnectionChanged(ChangeType type, USB_Serial_Device changedDevice)
+        protected void OnConnectionChanged(ChangeType type, USB_Device changedDevice)
         {
             if (ConnectionChanged != null) ConnectionChanged(this, new ConnectionChangedEventArgs(type, changedDevice));
         }
@@ -159,18 +172,27 @@ namespace TeensySharp
         #endregion
     }
 
-    public class USB_Serial_Device
+    public class USB_Device
     {
-        public string Serialnumber { get; set; }
+        public enum type
+        {
+            UsbSerial,
+            HalfKay, 
+            HID,
+            //...
+        }
+
+        public type Type;
+        public uint Serialnumber { get; set; }
         public string Port { get; set; }
     }
 
     public class ConnectionChangedEventArgs : EventArgs
     {
-        public readonly UsbWatcher.ChangeType changeType;
-        public readonly USB_Serial_Device changedDevice;
+        public readonly TeensyWatcher.ChangeType changeType;
+        public readonly USB_Device changedDevice;
 
-        public ConnectionChangedEventArgs(UsbWatcher.ChangeType type, USB_Serial_Device changedDevice)
+        public ConnectionChangedEventArgs(TeensyWatcher.ChangeType type, USB_Device changedDevice)
         {
             this.changeType = type;
             this.changedDevice = changedDevice;
