@@ -39,12 +39,14 @@ namespace TeensySharp
             
             var BoardDef = BoardDefinitions[board];
             int addr = 0;
+
+            //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
             foreach (var dataBlock in Image.Batch(BoardDef.BlockSize))
             {
                 if (dataBlock.Any(d => d != 0xFF) || addr == 0) //skip empty blocks but always write first block to erase chip
                 {
                     var report = PrepareReport(addr, dataBlock.ToArray(), BoardDef);
-                    if (!device.WriteReport(report))  //if first write fails (happens) wait and retry once
+                    if (!device.WriteReport(report))  //if write fails (happens if teensy still busy) wait and retry once
                     {
                         Thread.Sleep(10);
                         if (!device.WriteReport(report)) return 2;
@@ -55,6 +57,7 @@ namespace TeensySharp
                 addr += BoardDef.BlockSize;
             }
         
+            // Reboot the device to start the downloaded firmware
             if (reboot)
             {
                 var rebootReport = device.CreateReport();
@@ -85,8 +88,7 @@ namespace TeensySharp
                 //Start HalfKay                 
                 using (var port = new SerialPort(Teensy.Port))
                 {
-                    port.Open();
-                    int previousBR = port.BaudRate;
+                    port.Open();                  
                     port.BaudRate = 134; //This will switch the board to HalfKay. Don't try to access port after this...                   
                 }
             }
