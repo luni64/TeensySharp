@@ -10,7 +10,7 @@ namespace TeensySharp
         const uint vid = 0x16C0;
         const uint serPid = 0x483;
         const uint halfKayPid = 0x478;
-        string vidStr = "'%USB_VID[_]" + vid.ToString("X") + "%'";
+        const string vidStr = "'%USB_VID[_]16C0%'";
 
         #region Properties and Events -----------------------------------------------
 

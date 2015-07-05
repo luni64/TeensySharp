@@ -26,7 +26,7 @@ namespace TeensyWatcherConsole
                 }
                 else Console.WriteLine("HalfKay: Serialnumber {0}", Teensy.Serialnumber);
             }
-
+            
             // Here is a good place to construct a SerialPort Object
             // for the sake of simplicity lets take the first one from the list
             var myTeensy = Watcher.ConnectedDevices.FirstOrDefault();

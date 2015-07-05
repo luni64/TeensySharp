@@ -20,40 +20,24 @@ namespace TeensySharp
     public static class SharpUploader
     {
         #region Public Methods ----------------------------------------------------------------------------------
+              
 
-
-        static HidDevice GetDeviceFromSerialnumber(string Serialnumber)
-        {
-            var devices = HidDevices.Enumerate(0x16C0, 0x0478);
-            var device = Serialnumber == "" ? devices.FirstOrDefault() : devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber);
-
-            if (device == null)
+        public static int Upload(byte[] Image, PJRC_Board board, uint Serialnumber, bool reboot = true)
+        {            
+            // Obtain a HalfKayed board with the required serialnumber        
+            HidDevice device = null; 
+            var Timeout = DateTime.Now + TimeSpan.FromSeconds(3); 
+            while (DateTime.Now < Timeout )  //Try for some time in case HalfKay is just booting up
             {
-                StartHalfKay(Serialnumber);
-                DateTime start = DateTime.Now;
-                while (DateTime.Now - start < TimeSpan.FromSeconds(5))
-                {
-                    devices = HidDevices.Enumerate(0x16C0, 0x0478);
-                //    var device = Serialnumber == "" ? devices.FirstOrDefault() : devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber);
-
-                }
+                var devices = HidDevices.Enumerate(0x16C0, 0x0478); // Get all boards with running HalfKay
+                device =  devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber); // check if the correct one is online
+                if (device != null) break;  // found it              
+                Thread.Sleep(500);                 
             }
+            if (device == null) return 1; // Didn't find a HalfKayed board with requested serialnumber
 
-            return device;
-        }
-
-        public static int Upload(byte[] Image, PJRC_Board board, string Serialnumber = "", bool reboot = true)
-        {
+            
             var BoardDef = BoardDefinitions[board];
-
-            var devices = HidDevices.Enumerate(0x16C0, 0x0478);
-            var device = Serialnumber == "" ? devices.FirstOrDefault() : devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber);
-
-            if (device == null)
-            {
-                StartHalfKay(Serialnumber);
-            }
-
             int addr = 0;
             foreach (var dataBlock in Image.Batch(BoardDef.BlockSize))
             {
@@ -66,14 +50,11 @@ namespace TeensySharp
                         if (!device.WriteReport(report)) return 2;
                     }
                     Thread.Sleep(addr == 0 ? 100 : 1); // First block needs more time since it erases the complete chip
-                }
-                //Console.WriteLine(addr.ToString() + "-" + (addr + BoardDef.BlockSize).ToString() + " OK");
+                }         
 
                 addr += BoardDef.BlockSize;
             }
-
-            Thread.Sleep(5);
-
+        
             if (reboot)
             {
                 var rebootReport = device.CreateReport();
@@ -83,7 +64,7 @@ namespace TeensySharp
                 device.WriteReport(rebootReport);
             }
 
-            return 0;
+            return 0; // all good
         }
 
         public static byte[] GetEmptyFlashImage(PJRC_Board board)
@@ -92,25 +73,25 @@ namespace TeensySharp
             return Enumerable.Repeat((byte)0xFF, FlashSize).ToArray();
         }
 
-        public static bool StartHalfKay(string Serialnumber)
+        public static bool StartHalfKay(uint Serialnumber)
         {
-            //using (var watcher = new TeensyWatcher())
-            //{
-            //    var Teensy = watcher.ConnectedDevices.FirstOrDefault(d => d.Serialnumber == Serialnumber);
-            //    if (Teensy == null) return false;
-
-            //    using (var port = new SerialPort(Teensy.Port))
-            //    {
-            //        port.Open();
-            //        int previousBR = port.BaudRate;
-            //        port.BaudRate = 134;
-            //        port.BaudRate = previousBR;
-            //        port.Close();
-            //    }
-            //}
-            return true;
-        }
-
+            using (var watcher = new TeensyWatcher())
+            {
+                var Teensy = watcher.ConnectedDevices.FirstOrDefault(d => d.Serialnumber == Serialnumber);
+                if (Teensy == null) return false; // No device with given sn found
+                if (Teensy.Type == USB_Device.type.HalfKay) return true; // HalfKay already running on the device
+                if (Teensy.Type != USB_Device.type.UsbSerial) return false; // Unsupported USB mode
+            
+                //Start HalfKay                 
+                using (var port = new SerialPort(Teensy.Port))
+                {
+                    port.Open();
+                    int previousBR = port.BaudRate;
+                    port.BaudRate = 134; //This will switch the board to HalfKay. Don't try to access port after this...                   
+                }
+            }
+            return true; 
+        }        
         #endregion
 
         #region Private Methods and Fileds ----------------------------------------------------------------------
@@ -129,13 +110,13 @@ namespace TeensySharp
             return report;
         }
 
-        static string GetSerialNumber(HidDevice device)
+        static uint GetSerialNumber(HidDevice device)
         {
             byte[] sn;
             device.ReadSerialNumber(out sn);
 
             string snString = System.Text.Encoding.Unicode.GetString(sn).TrimEnd("\0".ToArray());
-            return (Convert.ToUInt32(snString, 16) * 10).ToString();
+            return (Convert.ToUInt32(snString, 16) * 10);
         }
 
         /// <summary>

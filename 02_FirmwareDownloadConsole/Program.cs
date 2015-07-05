@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using TeensySharp;
+using System.Linq;
+using System.Collections.Generic; 
 
 namespace SimpleTestApp
 {
@@ -12,7 +14,7 @@ namespace SimpleTestApp
             string file1 = "blink_slow.hex";
             string file2 = "blink_fast.hex";
 
-            string testfile = file1;
+            string testfile = file2;
 
             // Define the board to be programmed (all boards are implemented but currently only Teensy 3.1 is tested) 
             var Board = PJRC_Board.Teensy_31;
@@ -27,26 +29,36 @@ namespace SimpleTestApp
                 HexStream.Close();
             }
 
-            // Upload image to the board and reboot
-            int result = SharpUploader.Upload(FlashImage, Board, reboot: true);
-
-            // Show result
-            switch (result)
+            using (var Watcher = new TeensyWatcher())
             {
-                case 0:
-                    Console.WriteLine("Successfully uploaded");
-                    break;
-                case 1:
-                    Console.WriteLine("Found no board with running HalfKay. Did you press the programming button?");
-                    Console.WriteLine("Aborting...");
-                    break;
-                case 2:
-                    Console.WriteLine("Error during upload.");
-                    Console.WriteLine("Aborting...");
-                    break;
+                USB_Device Teensy = Watcher.ConnectedDevices.FirstOrDefault(); //We take the first Teensy we find...
+                               
+                Console.WriteLine("- Starting Bootloader for Teensy {0}...", Teensy.Serialnumber);
+                bool res = SharpUploader.StartHalfKay(Teensy.Serialnumber);
+                Console.WriteLine(res ? "  OK" : "  Bootloader not running");
+
+                // Upload firmware image to the board and reboot
+                Console.WriteLine("\n- Uploading {0}...", testfile);
+                int result = SharpUploader.Upload(FlashImage, Board, Teensy.Serialnumber, reboot: true);
+              
+                // Show result
+                switch (result)
+                {
+                    case 0:
+                        Console.WriteLine("  Successfully uploaded");
+                        break;
+                    case 1:
+                        Console.WriteLine("  Found no board with running HalfKay. Did you press the programming button?");
+                        Console.WriteLine("  Aborting...");
+                        break;
+                    case 2:
+                        Console.WriteLine("  Error during upload.");
+                        Console.WriteLine("  Aborting...");
+                        break;
+                }
+                Console.WriteLine("\nPress any key");
+                while (!Console.KeyAvailable) ;
             }
-            Console.WriteLine("\nPress any key");
-            while (!Console.KeyAvailable) ;
         }
     }
 }
