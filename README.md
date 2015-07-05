@@ -26,7 +26,7 @@ foreach (USB_Device Teensy in Watcher.ConnectedDevices.Where(t=>t.Type == USB_De
     Console.WriteLine("Serialnumber {0}, on {1}", Teensy.Serialnumber, Teensy.Port);
 }
 ```
-The string *Teensy.Port* string can then be used to construct a *SerialPort* object without having your users to guess which port number Windows assigned to your device today. 
+The string *Teensy.Port* can then be used to construct a *SerialPort* object without having your users to guess which port number Windows assigned to your device today. 
 
 In case you are looking for a board with a running bootloader and serialnumber 8324210
 ```c#
