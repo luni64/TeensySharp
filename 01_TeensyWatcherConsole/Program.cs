@@ -1,10 +1,6 @@
-﻿using Microsoft.Win32.SafeHandles;
-using System;
+﻿using System;
 using System.IO.Ports;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
 using TeensySharp;
 
 namespace TeensyWatcherConsole
