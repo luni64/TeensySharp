@@ -56,7 +56,7 @@ var Board = PJRC_Board.Teensy_31;
 var FlashImage = SharpUploader.GetEmptyFlashImage(Board);
 SharpHexParser.ParseStream(File.OpenText("firmware.hex"), FlashImage);
 ```
-The flash image now contains the bytes to be downloaded to the board. The actual download will be be done by the class *SharpeUploader*.
+The flash image now contains the bytes to be uploaded to the board. The actual upload will be be done by the class *SharpeUploader*.
 
 ###class SharpUploader
 To upload the flash image to the board you use the static *SharpUploader* class. You can start the bootloader  by calling *StartHalfKay(uint Serialnumber)* (alternatively you can press the button on the board). After that you pass the flash image to the *Upload* member of the *SharpUploader* class. In the example below we upload the image to the first board we find. 
@@ -66,10 +66,10 @@ USB_Device Teensy = Watcher.ConnectedDevices.FirstOrDefault();
 SharpUploader.StartHalfKay(Teensy.Serialnumber);
 int result = SharpUploader.Upload(FlashImage, Board, Teensy.Serialnumber, reboot: true);
 ```
-The reboot parameter determines if the board shall be rebooted after the download - which is what you usually want. The *Upload* function returns the following codes: 
-- **0** OK, download finished without error
+The reboot parameter determines if the board shall be rebooted after the upload - which is what you usually want. The *Upload* function returns the following codes: 
+- **0** OK, upload finished without error
 - **1** : No board with requested serialnumber and active HalfKay bootloader found 
-- **2** : Error during download of the firmware- 
+- **2** : Error during upload of the firmware- 
 
 The repo contains a  console application (*FirmwareDownloadConsole*) which demomstrates the use of the *TeensyWatcher* class.
 
