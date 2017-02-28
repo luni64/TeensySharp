@@ -47,13 +47,13 @@ namespace TeensySharp
                             break;
 
                         case RecordType.ExLinAdr:
-                            SEGBA = 0;
-                            ULBA = BitConverter.ToUInt16(data, 0);
+                            SEGBA = 0;                            
+                            ULBA = (256U * data[0] + data[1]) << 16;
                             break;
 
                         case RecordType.ExSegAdr:
                             ULBA = 0;
-                            SEGBA = (UInt16)(16U * BitConverter.ToUInt16(data, 0));
+                            SEGBA = (256U * data[0] + data[1]) << 4;
                             break;
 
                         //todo: Add code for RecordType.EOF
