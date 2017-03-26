@@ -4,12 +4,12 @@ This library provides some helper classes for C# Windows applications which comm
 - Provide information when a Teensy is connected or removed from the USB Tree
 - Uploading of firmware (ihex files) from within the user application.
 
-#Build
+# Build
 TeensySharp was developed using Microsoft VisualStudio 2013 Community Edition. The correspondig .sln file is contained in the repo. The library depends on the HIDLibrary from Mike O'Brian which can be found here: [https://github.com/mikeobrien/HidLibrary](https://github.com/mikeobrien/HidLibrary) and on MoreLinq ([https://code.google.com/p/morelinq/](https://code.google.com/p/morelinq/)). Both are available as NuGet packages. A download of the binaries from NuGet should start automatically when you build the solution. 
 
-#Usage
+# Usage
 ## Finding Connected Teensies
-###class TeensyWatcher
+### class TeensyWatcher
 To obtain a list of all currently connected Teensies you can do the following:
 ```c#
 var Watcher = new TeensyWatcher(); 
@@ -47,8 +47,8 @@ void ConnectedTeensiesChanged(object sender, ConnectionChangedEventArgs e)
 ```
 The repo contains a simple console application (*TeensyWacherConsole*) which demonstrates the use of the *TeensyWatcher* class and the eventhandler in more detail. 
 
-##Firmware Uploading
-###class SharpHexParser
+## Firmware Uploading
+### class SharpHexParser
 The static *SharpHexParser* class is used to parse an Intel HEX stream and copy the result,i.e. the firmware into a flash image (which is a simple byte array). To generate an empty flash image with the correct size you can call a member of the SharpUploader as shown in the following code snippet. (*PJRC_Board* is an enum containing definitions for all PJRC Teensy Boards)
 
 ```c#
@@ -58,7 +58,7 @@ SharpHexParser.ParseStream(File.OpenText("firmware.hex"), FlashImage);
 ```
 The flash image now contains the bytes to be uploaded to the board. The actual upload will be be done by the class *SharpeUploader*.
 
-###class SharpUploader
+### class SharpUploader
 To upload the flash image to the board you use the static *SharpUploader* class. You can start the bootloader  by calling *StartHalfKay(uint Serialnumber)* (alternatively you can press the button on the board). After that you pass the flash image to the *Upload* member of the *SharpUploader* class. In the example below we upload the image to the first board we find. 
 ```c#
 ...
@@ -73,7 +73,7 @@ The reboot parameter determines if the board shall be rebooted after the upload 
 
 The repo contains a  console application (*FirmwareDownloadConsole*) which demomstrates the use of the *TeensyWatcher* class.
 
-##Status
+## Status
 - Since I only own **Teensy 3.1** boards I could not test the library for the other PJRC boards. Any input / error reports / improvements welcome. 
-**ToBeDone:** WPF example showing the usage in a more realistic scenario
+** ToBeDone:** WPF example showing the usage in a more realistic scenario
 
