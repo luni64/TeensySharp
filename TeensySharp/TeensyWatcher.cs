@@ -148,7 +148,11 @@ namespace TeensySharp
             }
             else if (pid == halfKayPid)
             {
-                uint serNum = Convert.ToUInt32(DeviceIdParts[2], 16) * 10;
+                uint serNum = Convert.ToUInt32(DeviceIdParts[2], 16);
+                if (serNum != 0xFFFFFFFF)
+                {
+                    serNum *= 10;
+                }
 
                 return new USB_Device
                 {

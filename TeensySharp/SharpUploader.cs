@@ -118,7 +118,13 @@ namespace TeensySharp
             device.ReadSerialNumber(out sn);
 
             string snString = System.Text.Encoding.Unicode.GetString(sn).TrimEnd("\0".ToArray());
-            return (Convert.ToUInt32(snString, 16) * 10);
+         
+            var serialNumber = Convert.ToUInt32(snString, 16);
+            if (serialNumber != 0xFFFFFFFF)
+            {
+                serialNumber *= 10;
+            }
+            return serialNumber;
         }
 
         /// <summary>
