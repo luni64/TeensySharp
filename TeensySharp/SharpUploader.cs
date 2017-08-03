@@ -20,23 +20,23 @@ namespace TeensySharp
     public static class SharpUploader
     {
         #region Public Methods ----------------------------------------------------------------------------------
-              
+
 
         public static int Upload(byte[] Image, PJRC_Board board, uint Serialnumber, bool reboot = true)
-        {            
+        {
             // Obtain a HalfKayed board with the required serialnumber        
-            HidDevice device = null; 
-            var Timeout = DateTime.Now + TimeSpan.FromSeconds(3); 
-            while (DateTime.Now < Timeout )  //Try for some time in case HalfKay is just booting up
+            HidDevice device = null;
+            var Timeout = DateTime.Now + TimeSpan.FromSeconds(3);
+            while (DateTime.Now < Timeout)  //Try for some time in case HalfKay is just booting up
             {
                 var devices = HidDevices.Enumerate(0x16C0, 0x0478); // Get all boards with running HalfKay
-                device =  devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber); // check if the correct one is online
+                device = devices.FirstOrDefault(x => GetSerialNumber(x) == Serialnumber); // check if the correct one is online
                 if (device != null) break;  // found it              
-                Thread.Sleep(500);                 
+                Thread.Sleep(500);
             }
             if (device == null) return 1; // Didn't find a HalfKayed board with requested serialnumber
 
-            
+
             var BoardDef = BoardDefinitions[board];
             int addr = 0;
 
@@ -52,11 +52,11 @@ namespace TeensySharp
                         if (!device.WriteReport(report)) return 2;
                     }
                     Thread.Sleep(addr == 0 ? 100 : 1); // First block needs more time since it erases the complete chip
-                }         
+                }
 
                 addr += BoardDef.BlockSize;
             }
-        
+
             // Reboot the device to start the downloaded firmware
             if (reboot)
             {
@@ -84,16 +84,16 @@ namespace TeensySharp
                 if (Teensy == null) return false; // No device with given sn found
                 if (Teensy.Type == USB_Device.type.HalfKay) return true; // HalfKay already running on the device
                 if (Teensy.Type != USB_Device.type.UsbSerial) return false; // Unsupported USB mode
-            
+
                 //Start HalfKay                 
                 using (var port = new SerialPort(Teensy.Port))
                 {
-                    port.Open();                  
+                    port.Open();
                     port.BaudRate = 134; //This will switch the board to HalfKay. Don't try to access port after this...                   
                 }
             }
-            return true; 
-        }        
+            return true;
+        }
         #endregion
 
         #region Private Methods and Fileds ----------------------------------------------------------------------
@@ -127,51 +127,69 @@ namespace TeensySharp
         /// Currently only Teensy3.1 was tested, please inform if you find any errors on the other boards
         /// </summary>
         private static Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
-        {    
-            {PJRC_Board.Teensy_31, new BoardDefinition 
+        {
+            { PJRC_Board.Teensy_36, new BoardDefinition
             {
-                MCU=       "MK20DX256", 
-                FlashSize = 256 * 1024, 
-                BlockSize = 1024, 
-                DataOffset= 64, 
+                MCU =       "MK66FX1M0",
+                FlashSize = 1024 * 1024,
+                BlockSize = 1024,
+                DataOffset= 64,
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
-  
-            {PJRC_Board.Teensy_30, new BoardDefinition 
-            { 
-                MCU=       "MK20DX128", 
-                FlashSize = 128 * 1024, 
-                BlockSize = 1024, 
-                DataOffset= 64, 
+
+            { PJRC_Board.Teensy_35, new BoardDefinition
+            {
+                MCU=       "MK64FX512",
+                FlashSize = 512 * 1024,
+                BlockSize = 1024,
+                DataOffset= 64,
+                AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
+            }},
+
+            {PJRC_Board.Teensy_31, new BoardDefinition
+            {
+                MCU=       "MK20DX256",
+                FlashSize = 256 * 1024,
+                BlockSize = 1024,
+                DataOffset= 64,
+                AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
+            }},
+
+            {PJRC_Board.Teensy_30, new BoardDefinition
+            {
+                MCU=       "MK20DX128",
+                FlashSize = 128 * 1024,
+                BlockSize = 1024,
+                DataOffset= 64,
                 AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            {PJRC_Board.Teensy_LC, new BoardDefinition                                      
+            {PJRC_Board.Teensy_LC, new BoardDefinition
             {
-                MCU =      "MK126Z64",  
-                FlashSize = 62 * 1024, 
-                BlockSize = 512, 
-                DataOffset= 64, 
+                MCU =      "MK126Z64",
+                FlashSize = 62 * 1024,
+                BlockSize = 512,
+                DataOffset= 64,
                 AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            {PJRC_Board.Teensy_2pp, new BoardDefinition                                      
+            {PJRC_Board.Teensy_2pp, new BoardDefinition
             {
-                MCU =      "AT90USB1286",  
-                FlashSize = 12 * 1024, 
-                BlockSize = 256, 
-                DataOffset= 2, 
+                MCU =      "AT90USB1286",
+                FlashSize = 12 * 1024,
+                BlockSize = 256,
+                DataOffset= 2,
                 AddrCopy = (rep,addr)=>{rep[0]=addr[1]; rep[1]=addr[2];}
             }},
 
-            {PJRC_Board.Teensy_2, new BoardDefinition                                      
+            {PJRC_Board.Teensy_2, new BoardDefinition
             {
-                MCU =      "ATMEGA32U4",  
-                FlashSize = 31 * 1024, 
-                BlockSize = 128, 
-                DataOffset= 2, 
+                MCU =      "ATMEGA32U4",
+                FlashSize = 31 * 1024,
+                BlockSize = 128,
+                DataOffset= 2,
                 AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1];}
-            }}            
+            }}
         };
 
         private class BoardDefinition
@@ -188,9 +206,11 @@ namespace TeensySharp
 
     public enum PJRC_Board
     {
-        Teensy_LC,
+        Teensy_35,
+        Teensy_36,
         Teensy_31,
         Teensy_30,
+        Teensy_LC,
         Teensy_2pp,
         Teensy_2
     }
