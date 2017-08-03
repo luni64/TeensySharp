@@ -5,7 +5,7 @@ This library provides some helper classes for C# Windows applications which comm
 - Uploading of firmware (ihex files) from within the user application.
 
 # Build
-TeensySharp was developed using Microsoft VisualStudio 2013 Community Edition. The correspondig .sln file is contained in the repo. The library depends on the HIDLibrary from Mike O'Brian which can be found here: [https://github.com/mikeobrien/HidLibrary](https://github.com/mikeobrien/HidLibrary) and on MoreLinq ([https://code.google.com/p/morelinq/](https://code.google.com/p/morelinq/)). Both are available as NuGet packages. A download of the binaries from NuGet should start automatically when you build the solution. 
+TeensySharp was developed using Microsoft VisualStudio 2017 Community Edition. The correspondig .sln file is contained in the repo. The library depends on the HIDLibrary from Mike O'Brian which can be found here: [https://github.com/mikeobrien/HidLibrary](https://github.com/mikeobrien/HidLibrary) and on MoreLinq ([https://code.google.com/p/morelinq/](https://code.google.com/p/morelinq/)). Both are available as NuGet packages. A download of the binaries from NuGet should start automatically when you build the solution. 
 
 # Usage
 ## Finding Connected Teensies
