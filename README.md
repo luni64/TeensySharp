@@ -49,7 +49,7 @@ The repo contains a simple console application (*TeensyWacherConsole*) which dem
 
 ## Firmware Uploading
 ### class SharpHexParser
-The static *SharpHexParser* class is used to parse an Intel HEX stream and copy the result,i.e. the firmware into a flash image (which is a simple byte array). To generate an empty flash image with the correct size you can call a member of the SharpUploader as shown in the following code snippet. (*PJRC_Board* is an enum containing definitions for all PJRC Teensy Boards)
+The static *SharpHexParser* class is used to parse an Intel HEX stream and copy the result,i.e. the firmware into a flash image (which is a simple byte array). To generate an empty flash image with the correct size you can call a member of the SharpUploader as shown in the following code snippet. (*PJRC_Board* is an enum containing definitions for all supported PJRC Teensy Boards)
 
 ```c#
 var Board = PJRC_Board.Teensy_31; 
@@ -74,6 +74,6 @@ The reboot parameter determines if the board shall be rebooted after the upload 
 The repo contains a  console application (*FirmwareDownloadConsole*) which demomstrates the use of the *TeensyWatcher* class.
 
 ## Status
-- Since I only own **Teensy 3.1** boards I could not test the library for the other PJRC boards. Any input / error reports / improvements welcome. 
+- Compatibilty to T3.5 and T3.6 added
 ** ToBeDone:** WPF example showing the usage in a more realistic scenario
 
