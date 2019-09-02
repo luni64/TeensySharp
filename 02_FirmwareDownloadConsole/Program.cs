@@ -30,7 +30,7 @@ namespace SimpleTestApp
                     hexFile = "blink_35.hex";
                     Console.WriteLine("Selected Board: Teensy 3.5");
                     break;
-                case PJRC_Board.Teensy_31:
+                case PJRC_Board.Teensy_31_2:
                     hexFile = "blink_31.hex";
                     Console.WriteLine("Selected Board: Teensy 3.1 / 2");
                     break;

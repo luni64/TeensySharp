@@ -21,7 +21,6 @@ namespace TeensySharp
     {
         #region Public Methods ----------------------------------------------------------------------------------
 
-
         public static int Upload(byte[] Image, PJRC_Board board, uint Serialnumber, bool reboot = true)
         {
             // Obtain a HalfKayed board with the required serialnumber        
@@ -94,6 +93,8 @@ namespace TeensySharp
             }
             return true;
         }
+    
+
         #endregion
 
         #region Private Methods and Fileds ----------------------------------------------------------------------
@@ -152,7 +153,7 @@ namespace TeensySharp
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            {PJRC_Board.Teensy_31, new BoardDefinition
+            {PJRC_Board.Teensy_31_2, new BoardDefinition
             {
                 MCU=       "MK20DX256",
                 FlashSize = 256 * 1024,
@@ -212,12 +213,14 @@ namespace TeensySharp
 
     public enum PJRC_Board
     {
-        Teensy_35,
+        Teensy_40,
         Teensy_36,
-        Teensy_31,
+        Teensy_35,
+        Teensy_31_2,
         Teensy_30,
         Teensy_LC,
         Teensy_2pp,
-        Teensy_2
+        Teensy_2,
+        unknown,
     }
 }
