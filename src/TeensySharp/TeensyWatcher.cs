@@ -15,7 +15,7 @@ namespace TeensySharp
 
         #region Properties and Events -----------------------------------------------
 
-        public List<USB_Device> ConnectedDevices { get; private set; }
+        public List<USB_Device> ConnectedDevices { get; } = new List<USB_Device>();
         public event EventHandler<ConnectionChangedEventArgs> ConnectionChanged;
 
         #endregion
@@ -24,8 +24,6 @@ namespace TeensySharp
 
         public TeensyWatcher()
         {
-            ConnectedDevices = new List<USB_Device>();
-
             using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE " + vidStr))
             {
                 foreach (var mgmtObject in searcher.Get())
@@ -129,20 +127,17 @@ namespace TeensySharp
         protected USB_Device MakeDevice(ManagementBaseObject mgmtObj)
         {
             var DeviceIdParts = ((string)mgmtObj["PNPDeviceID"]).Split("\\".ToArray());
-
             if (DeviceIdParts[0] != "USB") return null;
 
             int start = DeviceIdParts[1].IndexOf("PID_") + 4;
             uint pid = Convert.ToUInt32(DeviceIdParts[1].Substring(start, 4), 16);
-
             if (pid == serPid)
             {
                 uint serNum = Convert.ToUInt32(DeviceIdParts[2]);
                 string port = (((string)mgmtObj["Caption"]).Split("()".ToArray()))[1];
 
-                var hwid = ((string[])mgmtObj["HardwareID"])[0];
-
                 PJRC_Board board;
+                var hwid = ((string[])mgmtObj["HardwareID"])[0];
                 switch (hwid.Substring(hwid.IndexOf("REV_") + 4, 4))
                 {
                     case "0273":
@@ -170,22 +165,29 @@ namespace TeensySharp
 
                 return new USB_Device
                 {
-                    Type = USB_Device.type.UsbSerial,
+#pragma warning disable 0618 // obsolete warning
+                    Type = USB_Device.USBtype.UsbSerial,
+                    UsbType = USB_Device.USBtype.UsbSerial,
                     Port = port,
                     Serialnumber = serNum,
-                    Board = board
+                    Board = board,
+                    BoardType = board
+#pragma warning restore 0618
                 };
             }
             else if (pid == halfKayPid)
             {
+                // getting the hid device like done in the following block is not very efficient
+                // need to find a way to extract the device path from the WMI and construct
+                // the devcie using HidDevices.GetDevice
                 var hwid = ((string[])mgmtObj["HardwareID"])[0];
                 uint serNum = Convert.ToUInt32(DeviceIdParts[2], 16);
-                if (serNum != 0xFFFFFFFF)
+                if (serNum != 0xFFFFFFFF) // diy boards without serial number
                 {
                     serNum *= 10;
                 }
 
-                var devices = HidDevices.Enumerate(0x16C0, (int)halfKayPid); // Get all boards with running HalfKay
+                var devices = HidDevices.Enumerate((int)vid, (int)halfKayPid); // Get all boards with running HalfKay
                 var device = devices.FirstOrDefault(x => GetSerialNumber(x) == serNum);
 
                 PJRC_Board board = PJRC_Board.unknown;
@@ -207,10 +209,14 @@ namespace TeensySharp
 
                 return new USB_Device
                 {
-                    Type = USB_Device.type.HalfKay,
+#pragma warning disable 0618
+                    Type = USB_Device.USBtype.HalfKay,
+                    UsbType = USB_Device.USBtype.HalfKay,
                     Port = "",
                     Serialnumber = serNum,
-                    Board = board
+                    Board = board,
+                    BoardType = board
+#pragma warning restore 0618
                 };
             }
             else return null;
@@ -246,7 +252,7 @@ namespace TeensySharp
 
     public class USB_Device
     {
-        public enum type
+        public enum USBtype
         {
             UsbSerial,
             HalfKay,
@@ -254,15 +260,19 @@ namespace TeensySharp
             //...
         }
 
-        public type Type;
+        [Obsolete("Please use UsbType instead.", false)]
+        public USBtype Type;
+        public USBtype UsbType;
         public uint Serialnumber { get; set; }
         public string Port { get; set; }
+        [Obsolete("Please use BoardType instead.", false)]
         public PJRC_Board Board { get; set; }
-        public string BoardID
+        public PJRC_Board BoardType;
+        public string BoardId
         {
             get
             {
-                switch (Board)
+                switch (BoardType)
                 {
                     case PJRC_Board.Teensy_2: return $"Teensy 2 ({Serialnumber})";
                     case PJRC_Board.Teensy_2pp: return $"Teensy 2++ ({Serialnumber})";
@@ -272,6 +282,7 @@ namespace TeensySharp
                     case PJRC_Board.Teensy_35: return $"Teensy 3.5 ({Serialnumber})";
                     case PJRC_Board.Teensy_36: return $"Teensy 3.6 ({Serialnumber})";
                     case PJRC_Board.Teensy_40: return $"Teensy 4.0 ({Serialnumber})";
+                    case PJRC_Board.unknown: return $"Unknown Board ({Serialnumber})";
                     default: return null;
                 }
             }

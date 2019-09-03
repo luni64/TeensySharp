@@ -16,6 +16,7 @@ namespace SimpleTestApp
             //var Board = PJRC_Board.Teensy_31;
             //var Board = PJRC_Board.Teensy_30;
             var Board = PJRC_Board.Teensy_LC;
+                        
 
             string hexFile;
 

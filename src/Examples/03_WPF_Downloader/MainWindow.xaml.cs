@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Windows;
 using TeensySharp;
-using System.Linq;
 using System.IO;
 
 namespace WpfDownload
@@ -70,7 +69,7 @@ namespace WpfDownload
             }
 
             var board = cbTeensy.SelectedItem as USB_Device;
-            var image = SharpUploader.GetEmptyFlashImage(board.Board);
+            var image = SharpUploader.GetEmptyFlashImage(board.BoardType);
 
             using (var stream = File.OpenText(tbFirmware.Text))
             {
@@ -78,14 +77,14 @@ namespace WpfDownload
             }
 
             var fwType = SharpHexParser.IdentifyModel(image);
-            if (fwType != board.Board)
+            if (fwType != board.BoardType)
             {
                 MessageBox.Show("Firmware not compatible with Board");
                 return;
             }
 
             SharpUploader.StartHalfKay(board.Serialnumber);
-            int result = SharpUploader.Upload(image, board.Board, board.Serialnumber);
+            int result = SharpUploader.Upload(image, board.BoardType, board.Serialnumber);
 
             if (result != 0)
             {

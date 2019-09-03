@@ -29,7 +29,7 @@
                 <TextBox x:Name="tbFirmware" DockPanel.Dock="Left" Margin="0,0,10,0" />
             </DockPanel>
             <TextBlock Text="Found Teensies (Serial Number):" Margin="0,25,0,0"/>
-            <ListBox x:Name="cbTeensy" Height="200" DisplayMemberPath="BoardID" />
+            <ListBox x:Name="cbTeensy" Height="200" DisplayMemberPath="BoardId"  />
         </StackPanel>
 
 

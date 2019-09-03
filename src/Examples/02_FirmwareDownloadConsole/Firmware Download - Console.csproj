@@ -60,7 +60,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TeensySharp\TeensySharp.csproj">
+    <ProjectReference Include="..\..\TeensySharp\TeensySharp.csproj">
       <Project>{c7cb6e1b-7902-47fa-b2fd-63ea0519af3f}</Project>
       <Name>TeensySharp</Name>
     </ProjectReference>

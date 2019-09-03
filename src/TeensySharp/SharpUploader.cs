@@ -81,8 +81,8 @@ namespace TeensySharp
             {
                 var Teensy = watcher.ConnectedDevices.FirstOrDefault(d => d.Serialnumber == Serialnumber);
                 if (Teensy == null) return false; // No device with given sn found
-                if (Teensy.Type == USB_Device.type.HalfKay) return true; // HalfKay already running on the device
-                if (Teensy.Type != USB_Device.type.UsbSerial) return false; // Unsupported USB mode
+                if (Teensy.UsbType == USB_Device.USBtype.HalfKay) return true; // HalfKay already running on the device
+                if (Teensy.UsbType != USB_Device.USBtype.UsbSerial) return false; // Unsupported USB mode
 
                 //Start HalfKay                 
                 using (var port = new SerialPort(Teensy.Port))
