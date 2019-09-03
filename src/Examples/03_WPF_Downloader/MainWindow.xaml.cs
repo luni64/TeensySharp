@@ -77,7 +77,7 @@ namespace WpfDownload
             }
 
             var fwType = SharpHexParser.IdentifyModel(image);
-            if (fwType != board.BoardType)
+            if (board.BoardType != PJRC_Board.Teensy_40 && board.BoardType != fwType )
             {
                 MessageBox.Show("Firmware not compatible with Board");
                 return;

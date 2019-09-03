@@ -57,7 +57,7 @@ namespace TeensySharp
                         magic_check = 0x00043F82;
                         break;
                     default:
-                        board = PJRC_Board.unknown;
+                        board = PJRC_Board.unknown; // ToDo: Need to find the correct bytes for the T4.0
                         magic_check = 0;
                         break;
                 }
@@ -100,6 +100,7 @@ namespace TeensySharp
                         case RecordType.ExLinAdr:
                             SEGBA = 0;
                             ULBA = (256U * data[0] + data[1]) << 16;
+                            if (ULBA == 0x6000_0000) ULBA = 0;  // HACK, need to clarify why the flash is stored at 0x6000_0000 ff
                             break;
 
                         case RecordType.ExSegAdr:

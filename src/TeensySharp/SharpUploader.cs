@@ -93,7 +93,7 @@ namespace TeensySharp
             }
             return true;
         }
-    
+
 
         #endregion
 
@@ -119,7 +119,7 @@ namespace TeensySharp
             device.ReadSerialNumber(out sn);
 
             string snString = System.Text.Encoding.Unicode.GetString(sn).TrimEnd("\0".ToArray());
-         
+
             var serialNumber = Convert.ToUInt32(snString, 16);
             if (serialNumber != 0xFFFFFFFF)
             {
@@ -135,6 +135,15 @@ namespace TeensySharp
         /// </summary>
         private static Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
         {
+            { PJRC_Board.Teensy_40, new BoardDefinition
+            {
+                MCU =       "IMXRT1062",
+                FlashSize = 2048 * 1024,
+                BlockSize = 1024,
+                DataOffset= 64,
+                AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
+            }},
+
             { PJRC_Board.Teensy_36, new BoardDefinition
             {
                 MCU =       "MK66FX1M0",
