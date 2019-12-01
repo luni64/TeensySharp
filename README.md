@@ -4,8 +4,12 @@ This library provides some helper classes for C# Windows applications which comm
 - Provide information when a Teensy is connected or removed from the USB Tree
 - Uploading of firmware (ihex files) from within the user application.
 
+# Installation
+
+For easy installation TeensySharp is available as [nuget package](https://www.nuget.org/packages/lunoptics.TeensySharp/).
+
 # Build
-TeensySharp was developed using Microsoft VisualStudio 2017 Community Edition. The correspondig .sln file is contained in the repo. The library depends on the HIDLibrary from Mike O'Brian which can be found here: [https://github.com/mikeobrien/HidLibrary](https://github.com/mikeobrien/HidLibrary) and on MoreLinq ([https://code.google.com/p/morelinq/](https://code.google.com/p/morelinq/)). Both are available as NuGet packages. A download of the binaries from NuGet should start automatically when you build the solution. 
+In case you don't want to include the nuget package you can of course include the sources in your project. TeensySharp was developed using Microsoft VisualStudio 2019 Community Edition. The correspondig .sln file is contained in the repo. The library depends on the HIDLibrary from Mike O'Brian which can be found here: [https://github.com/mikeobrien/HidLibrary](https://github.com/mikeobrien/HidLibrary) and on [MoreLINQ](https://morelinq.github.io/). Both are available as NuGet packages. A download of the binaries from NuGet should start automatically when you build the solution. 
 
 # Usage
 ## Finding Connected Teensies
