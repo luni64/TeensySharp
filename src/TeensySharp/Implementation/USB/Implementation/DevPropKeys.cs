@@ -1,11 +1,12 @@
 ﻿using System;
 
-namespace TeensySharpLib.Implementation.usb
+namespace lunOptics.UsbTree.Implementation
 {
-    internal static class DevPropKeys
+    public static class DevPropKeys
     {
         public static DEVPROPKEY DeviceInstanceId;
-        public static DEVPROPKEY DeviceClass;        
+        public static DEVPROPKEY DeviceClass;
+        public static DEVPROPKEY DeviceClassGuid;
         public static DEVPROPKEY BusReportedDeviceDesc;
         public static DEVPROPKEY DeviceDesc;
         public static DEVPROPKEY FriendlyName;
@@ -21,6 +22,7 @@ namespace TeensySharpLib.Implementation.usb
             DeviceDesc = new DEVPROPKEY() { pid = 2, fmtid = SPDRP_GUID };
             ContainerID = new DEVPROPKEY() { pid = 38, fmtid = SPDRP_GUID };
             DeviceClass = new DEVPROPKEY() { pid = 9, fmtid = SPDRP_GUID };
+            DeviceClassGuid = new DEVPROPKEY() { pid = 10, fmtid = SPDRP_GUID };
 
             DeviceInstanceId = new DEVPROPKEY() { pid = 256, fmtid = new Guid(0x78c34fc8, 0x104a, 0x4aca, 0x9e, 0xa4, 0x52, 0x4d, 0x52, 0x99, 0x6e, 0x57) };
             BusReportedDeviceDesc = new DEVPROPKEY() { pid = 4, fmtid = new Guid(0x540b947e, 0x8b40, 0x45bc, 0xa8, 0xa2, 0x6a, 0x0b, 0x89, 0x4c, 0xbd, 0xa2) };

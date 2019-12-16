@@ -15,14 +15,25 @@ namespace ViewModel
 
         public MainVM()
         {
-            var rootDevices = UsbTree.getDevices().Where(d => d.Parent == null);
+            var devices = UsbTree.getDevices();
+
+
+            var rootDevices = devices.Where(d => d.Parent == null);
+
+            var ports = devices.OfType<IUsbSerial>();
+
 
             foreach (var rootDevice in rootDevices)
             {
                 UsbTree.print(rootDevice);
             }
 
-                      
+
+          
+            //var hids =  (IUsbSerial) UsbTree.getDevices().Where(d => d is IUsbSerial);
+
+            var p = ports.FirstOrDefault().Port;
+
 
             TeensySharp.SynchronizationContext(SynchronizationContext.Current);
 

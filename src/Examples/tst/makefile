@@ -17,10 +17,10 @@ BOARD_ID         := TEENSYLC
 MCU              := mkl26z64
 
 LIBS_SHARED_BASE := C:\Users\lutz\Documents\Arduino\libraries
-LIBS_SHARED      := 
+LIBS_SHARED      :=
 
 LIBS_LOCAL_BASE  := lib
-LIBS_LOCAL       := 
+LIBS_LOCAL       :=
 
 CORE_BASE        := C:\PROGRA~1\Arduino\ARDUIN~1.9\hardware\teensy\avr\cores\teensy3
 GCC_BASE         := C:\PROGRA~1\Arduino\ARDUIN~1.9\hardware\tools\arm\bin
@@ -34,10 +34,10 @@ UPL_JLINK_B      := C:\PROGRA~2\SEGGER\JLINK_~1
 FLAGS_CPU   := -mthumb -mcpu=cortex-m0plus -fsingle-precision-constant
 FLAGS_OPT   := -Os --specs=nano.specs
 FLAGS_COM   := -g -Wall -ffunction-sections -fdata-sections -nostdlib -MMD
-FLAGS_LSP   := 
+FLAGS_LSP   :=
 
 FLAGS_CPP   := -fno-exceptions -fpermissive -felide-constructors -std=gnu++14 -Wno-error=narrowing -fno-rtti
-FLAGS_C     := 
+FLAGS_C     :=
 FLAGS_S     := -x assembler-with-cpp
 FLAGS_LD    := -Wl,--gc-sections,--relax,--defsym=__rtc_localtime=$(shell powershell [int](Get-Date -UFormat +%s)[0]) -T$(CORE_BASE)/mkl26z64.ld -lstdc++
 
@@ -148,6 +148,9 @@ generateDirs := $(foreach d, $(DIRECTORIES), $(shell if not exist "$d" mkdir "$d
 # Rules:
 #******************************************************************************
 
+$(info TARGET_HEX: $(TARGET_HEX))
+
+
 .PHONY: directories all rebuild upload uploadTy uploadCLI clean cleanUser cleanCore
 
 
@@ -162,7 +165,7 @@ upload: all
 	@$(UPL_PJRC)
 
 uploadTy: all
-	@$(UPL_TYCMD)
+	$(UPL_TYCMD)
 
 uploadCLI: all
 	@$(UPL_CLICMD)
@@ -187,7 +190,7 @@ $(CORE_BIN)/%.o: $(CORE_SRC)/%.cpp
 $(CORE_LIB) : $(CORE_OBJ)
 	@echo $(COL_LINK)CORE [AR]  $@ $(COL_ERR)
 	@$(AR) $(AR_FLAGS) $@ $^
-	@echo $(COL_OK)Teensy core built successfully &&echo. 
+	@echo $(COL_OK)Teensy core built successfully &&echo.
 
 # Shared Libraries ------------------------------------------------------------
 $(LIB_BIN)/%.o: $(LIBS_SHARED_BASE)/%.S
@@ -218,7 +221,7 @@ $(LIB_BIN)/%.o: $(LIBS_LOCAL_BASE)/%.c
 # Handle user sources ---------------------------------------------------------
 $(USR_BIN)/%.o: $(USR_SRC)/%.S
 	@echo $(COL_SRC)USER [ASM] $< $(COL_ERR)
-	@"$(CC)" $(S_FLAGS) $(INCLUDE) -o $@ -c $< 
+	@"$(CC)" $(S_FLAGS) $(INCLUDE) -o $@ -c $<
 
 $(USR_BIN)/%.o: $(USR_SRC)/%.c
 	@echo $(COL_SRC)USER [CC]  $(notdir $<) $(COL_ERR)
@@ -238,15 +241,15 @@ $(TARGET_ELF): $(CORE_LIB) $(LIB_OBJ) $(USR_OBJ)
 %.lst: %.elf
 	@echo $(COL_LINK)
 	@echo [LST] $@ $(COL_ERR)
-	@$(OBJDUMP) -d -S --demangle --no-show-raw-insn --syms "$<"  > "$@"	
+	@$(OBJDUMP) -d -S --demangle --no-show-raw-insn --syms "$<"  > "$@"
 	@echo $(COL_OK)Sucessfully built project$(COL_RESET) &&echo.
 
 %.hex: %.elf
-	@echo $(COL_LINK)[HEX] $@ 
+	@echo $(COL_LINK)[HEX] $@
 	@$(SIZE) "$<"
 	@$(OBJCOPY) -O ihex -R.eeprom "$<" "$@"
-	
-	
+
+
 # Cleaning --------------------------------------------------------------------
 cleanUser:
 	@echo $(COL_LINK)Cleaning user binaries...$(COL_RESET)
@@ -256,7 +259,7 @@ cleanUser:
 cleanCore:
 	@echo $(COL_LINK)Cleaning core binaries...$(COL_RESET)
 	@if exist $(CORE_BIN) rd /s/q "$(CORE_BIN)"
-	@if exist $(CORE_LIB) del  $(subst /,\,$(CORE_LIB))	
+	@if exist $(CORE_LIB) del  $(subst /,\,$(CORE_LIB))
 
 cleanLib:
 	@echo $(COL_LINK)Cleaning user library binaries...$(COL_RESET)

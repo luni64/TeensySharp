@@ -13,4 +13,9 @@ namespace lunOptics.UsbTree.Implementation
         List<IUsbDevice> children { get; }        
         bool IsUsbInterface { get;  }
     }
+
+    public interface IUsbSerial : IUsbDevice
+    {
+        String Port { get; }
+    }
 }
