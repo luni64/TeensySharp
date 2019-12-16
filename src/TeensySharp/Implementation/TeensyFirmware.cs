@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using TeensySharp.Interface;
+using lunOptics.TeensySharp;
 using System.Linq;
 
-namespace TeensySharp.Implementation
+namespace lunOptics.TeensySharp.Implementation
 {
     internal class TeensyFirmware : IFirmware
     {

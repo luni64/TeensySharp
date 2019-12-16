@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeensySharp", "TeensySharp\TeensySharp.csproj", "{C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeensySharp", "TeensySharp\TeensySharp.csproj", "{C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{FFFF08DC-3150-47F9-8016-0CF24B484076}"
 EndProject
@@ -12,6 +12,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teensy Watcher - Console", "Examples\01_TeensyWatcherConsole\Teensy Watcher - Console.csproj", "{D1A39D4E-FCB3-4BD4-8A8A-140E4794B376}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firmware Download - Console", "Examples\02_FirmwareDownloadConsole\Firmware Download - Console.csproj", "{A008DB64-75AD-4207-8930-C223D2336844}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeensyIFaceTester", "Examples\04_TeensyIFaceTester\TeensyIFaceTester.csproj", "{D43F33CC-DCF0-452B-833D-D4785528AFA3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F} = {C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,17 +29,18 @@ Global
 		{C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{21A4DF58-4CFD-45D9-AC00-5D1417A409FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21A4DF58-4CFD-45D9-AC00-5D1417A409FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21A4DF58-4CFD-45D9-AC00-5D1417A409FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21A4DF58-4CFD-45D9-AC00-5D1417A409FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1A39D4E-FCB3-4BD4-8A8A-140E4794B376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1A39D4E-FCB3-4BD4-8A8A-140E4794B376}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1A39D4E-FCB3-4BD4-8A8A-140E4794B376}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1A39D4E-FCB3-4BD4-8A8A-140E4794B376}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A008DB64-75AD-4207-8930-C223D2336844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A008DB64-75AD-4207-8930-C223D2336844}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A008DB64-75AD-4207-8930-C223D2336844}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A008DB64-75AD-4207-8930-C223D2336844}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D43F33CC-DCF0-452B-833D-D4785528AFA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D43F33CC-DCF0-452B-833D-D4785528AFA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D43F33CC-DCF0-452B-833D-D4785528AFA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D43F33CC-DCF0-452B-833D-D4785528AFA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{21A4DF58-4CFD-45D9-AC00-5D1417A409FC} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{D1A39D4E-FCB3-4BD4-8A8A-140E4794B376} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{A008DB64-75AD-4207-8930-C223D2336844} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
+		{D43F33CC-DCF0-452B-833D-D4785528AFA3} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {659FE2B3-5714-4395-9A9A-CB2171AA2A7A}

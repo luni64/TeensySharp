@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.IO;
-using TeensySharp.Interface;
+using lunOptics.TeensySharp;
 
-namespace TeensySharp
+namespace lunOptics.TeensySharp.Implementation
 {
     public static class SharpHexParser
     {

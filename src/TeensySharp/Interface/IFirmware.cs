@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TeensySharp.Interface
+namespace lunOptics.TeensySharp
 {
     public interface IFirmware
     {

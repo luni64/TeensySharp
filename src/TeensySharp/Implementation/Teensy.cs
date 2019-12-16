@@ -1,58 +1,75 @@
 ﻿using HidLibrary;
 using MoreLinq;
+using RJCP.IO.Ports;
 using System;
 using System.Collections.Generic;
-using System.IO.Ports;
+using System.ComponentModel;
 using System.Linq;
-using System.Management;
+using System.Runtime.CompilerServices;
 using System.Threading;
-using TeensySharp.Interface;
 
-namespace TeensySharp
+
+namespace lunOptics.TeensySharp.Implementation
 {
-    internal class Teensy_t : ITeensy
+    internal class Teensy : ITeensy
     {
         #region Implementation of ITeensy --------------------------------
-        public USBtype usbType { get; internal set; }
-        public PJRC_Board boardType { get; internal set; }
-        public uint serialnumber { get; internal set; }
-        public string port { get; internal set; }
-        public string boardId
+        public UsbTypes UsbType 
+        {
+            get => _usbType;
+            internal set => SetProperty(ref _usbType, value);
+        }
+        private UsbTypes _usbType;
+
+        public string description { get; private set; }
+
+        public UsbSubTypes UsbSubType
+        {
+            get => _usbSubType;
+            internal set => SetProperty(ref _usbSubType, value);
+        }
+        private UsbSubTypes _usbSubType;
+
+
+        public PJRC_Board BoardType { get; internal set; }
+        public uint Serialnumber { get; internal set; }
+        public string Port { get; internal set; }
+        public string BoardId
         {
             get
             {
-                switch (boardType)
+                switch (BoardType)
                 {
-                    case PJRC_Board.Teensy_2: return $"Teensy 2 ({serialnumber})";
-                    case PJRC_Board.Teensy_2pp: return $"Teensy 2++ ({serialnumber})";
-                    case PJRC_Board.Teensy_LC: return $"Teensy LC ({serialnumber})";
-                    case PJRC_Board.Teensy_30: return $"Teensy 3.0 ({serialnumber})";
-                    case PJRC_Board.Teensy_31_2: return $"Teensy 3.2 ({serialnumber})";
-                    case PJRC_Board.Teensy_35: return $"Teensy 3.5 ({serialnumber})";
-                    case PJRC_Board.Teensy_36: return $"Teensy 3.6 ({serialnumber})";
-                    case PJRC_Board.Teensy_40: return $"Teensy 4.0 ({serialnumber})";
-                    case PJRC_Board.unknown: return $"Unknown Board ({serialnumber})";
+                    case PJRC_Board.Teensy_2: return $"Teensy 2 ({Serialnumber})";
+                    case PJRC_Board.Teensy_2pp: return $"Teensy 2++ ({Serialnumber})";
+                    case PJRC_Board.Teensy_LC: return $"Teensy LC ({Serialnumber})";
+                    case PJRC_Board.Teensy_30: return $"Teensy 3.0 ({Serialnumber})";
+                    case PJRC_Board.Teensy_31_2: return $"Teensy 3.2 ({Serialnumber})";
+                    case PJRC_Board.Teensy_35: return $"Teensy 3.5 ({Serialnumber})";
+                    case PJRC_Board.Teensy_36: return $"Teensy 3.6 ({Serialnumber})";
+                    case PJRC_Board.Teensy_40: return $"Teensy 4.0 ({Serialnumber})";
+                    case PJRC_Board.unknown: return $"Unknown Board ({Serialnumber})";
                     default: return null;
                 }
             }
         }
 
-        public bool StartBootloader()
-        {
-            switch (usbType)
+        public bool Reboot()
+        { 
+            switch (UsbType)
             {
-                case USBtype.HalfKay:
+                case UsbTypes.HalfKay:
                     return true;
 
-                case USBtype.UsbSerial:
-                    using (var port = new SerialPort(this.port))
+                case UsbTypes.Serial:
+                    using (ISerialPortStream port = new SerialPortStream(this.Port))
                     {
                         port.Open();
                         port.BaudRate = 134; //This will switch the board to HalfKay. Don't try to access port after this...                   
                     }
                     break;
 
-                case USBtype.HID:
+                case UsbTypes.HID:
                     hidDevice.WriteFeatureData(new byte[] { 0x00, 0xA9, 0x45, 0xC2, 0x6B });
                     break;
 
@@ -65,29 +82,44 @@ namespace TeensySharp
             while (DateTime.Now < Timeout)  //Try for some time in case HalfKay is just booting up
             {
                 var devices = HidDevices.Enumerate(0x16C0, 0x0478); // Get all boards with running HalfKay
-                device = devices.FirstOrDefault(x => TeensyWatcher.GetSerialNumber(x, 16) == serialnumber); // check if the correct one is online
+                device = devices.FirstOrDefault(x => TeensySharp.GetSerialNumber(x, 16) == Serialnumber); // check if the correct one is online
                 if (device != null) break;  // found it              
                 Thread.Sleep(500);
             }
             if (device == null) return false; // Didn't find a HalfKayed board with requested serialnumber
 
-            this.usbType = USBtype.HalfKay;
+            this.UsbType = UsbTypes.HalfKay;
             this.hidDevice = device;
-            this.port = "";
+            this.Port = "";
 
             return true;
         }
+
+        public bool Reset()
+        {
+            Reboot();
+            if (UsbType != UsbTypes.HalfKay) return false;
+
+            var rebootReport = hidDevice.CreateReport();
+            rebootReport.Data[0] = 0xFF;
+            rebootReport.Data[1] = 0xFF;
+            rebootReport.Data[2] = 0xFF;
+            hidDevice.WriteReport(rebootReport);
+
+            return true;
+        }
+
         public bool Upload(IFirmware firmware, bool checkType = true, bool reset = true)
         {
-            if (checkType && firmware.boardType != boardType) return false; 
+            if (checkType && firmware.boardType != BoardType) return false;
 
-            if (usbType != USBtype.HalfKay)
+            if (UsbType != UsbTypes.HalfKay)
             {
-                StartBootloader();
+                Reboot();
             }
-            if (usbType != USBtype.HalfKay) return false; // wasn't able to start bootloader
+            if (UsbType != UsbTypes.HalfKay) return false; // wasn't able to start bootloader
 
-            var BoardDef = BoardDefinitions[boardType];
+            var BoardDef = BoardDefinitions[BoardType];
             uint addr = 0;
 
             //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
@@ -113,32 +145,45 @@ namespace TeensySharp
                 while (true)
                 {
                     Thread.Sleep(50);
-                    var newTeensy = (Teensy_t)TeensyWatcher.getConnectedTeensies().Where(t => t.serialnumber == serialnumber && t.boardType != PJRC_Board.unknown).FirstOrDefault();
+                    var newTeensy = (Teensy)TeensySharp.ConnectedBoards.Where(t => t.Serialnumber == Serialnumber && t.BoardType != PJRC_Board.unknown)
+                        .FirstOrDefault();
                     if (newTeensy != null)
                     {
-                        usbType = newTeensy.usbType;
+                        UsbType = newTeensy.UsbType;
                         hidDevice = newTeensy.hidDevice;
-                        port = newTeensy.port;
+                        Port = newTeensy.Port;
                         return true;
                     }
                 }
             }
             return true;
         }
-        public bool Reset()
-        {
-            StartBootloader();
-            if (usbType != USBtype.HalfKay) return false;
-
-            var rebootReport = hidDevice.CreateReport();
-            rebootReport.Data[0] = 0xFF;
-            rebootReport.Data[1] = 0xFF;
-            rebootReport.Data[2] = 0xFF;
-            hidDevice.WriteReport(rebootReport);
-
-            return true;
-        }
         #endregion
+
+        #region Implementation of INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "")
+        {
+            if (!EqualityComparer<T>.Default.Equals(field, value))
+            {
+                field = value;
+                OnPropertyChanged(name);
+            }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string name = "")
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        #endregion
+
+        public bool isConnected { get; private set; }
 
         internal HidDevice hidDevice { get; set; } = null;
 
@@ -230,6 +275,8 @@ namespace TeensySharp
                 AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1];}
             }}
         };
+               
+
         private class BoardDefinition
         {
             public uint FlashSize;
@@ -239,101 +286,6 @@ namespace TeensySharp
             public Action<byte[], byte[]> AddrCopy;
         }
     }
-
-
-    //internal class BoardDefinition
-    //{
-    //    public uint FlashSize;
-    //    public uint BlockSize;
-    //    public uint DataOffset;
-    //    public string MCU;
-    //    public Action<byte[], byte[]> AddrCopy;
-    //}
-
-    //static class BD
-    //{
-    //    public BoardDefinition  this[int i]
-    //    {
-
-    //    }
-
-    //    static Dictionary<PJRC_Board, BoardDefinition> bd = new Dictionary<PJRC_Board, BoardDefinition>
-    //    {
-    //        { PJRC_Board.Teensy_40, new BoardDefinition
-    //        {
-    //            MCU =       "IMXRT1062",
-    //            FlashSize = 2048 * 1024,
-    //            BlockSize = 1024,
-    //            DataOffset= 64,
-    //            AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
-    //        }},
-    //        { PJRC_Board.Teensy_36, new BoardDefinition
-    //        {
-    //            MCU =       "MK66FX1M0",
-    //            FlashSize = 1024 * 1024,
-    //            BlockSize = 1024,
-    //            DataOffset= 64,
-    //            AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
-    //        }},
-    //        { PJRC_Board.Teensy_35, new BoardDefinition
-    //        {
-    //            MCU=       "MK64FX512",
-    //            FlashSize = 512 * 1024,
-    //            BlockSize = 1024,
-    //            DataOffset= 64,
-    //            AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
-    //        }},
-    //        {PJRC_Board.Teensy_31_2, new BoardDefinition
-    //        {
-    //            MCU=       "MK20DX256",
-    //            FlashSize = 256 * 1024,
-    //            BlockSize = 1024,
-    //            DataOffset= 64,
-    //            AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
-    //        }},
-    //        {PJRC_Board.Teensy_30, new BoardDefinition
-    //        {
-    //            MCU=       "MK20DX128",
-    //            FlashSize = 128 * 1024,
-    //            BlockSize = 1024,
-    //            DataOffset= 64,
-    //            AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
-    //        }},
-    //        {PJRC_Board.Teensy_LC, new BoardDefinition
-    //        {
-    //            MCU =      "MK126Z64",
-    //            FlashSize = 62 * 1024,
-    //            BlockSize = 512,
-    //            DataOffset= 64,
-    //            AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
-    //        }},
-    //        {PJRC_Board.Teensy_2pp, new BoardDefinition
-    //        {
-    //            MCU =      "AT90USB1286",
-    //            FlashSize = 12 * 1024,
-    //            BlockSize = 256,
-    //            DataOffset= 2,
-    //            AddrCopy = (rep,addr)=>{rep[0]=addr[1]; rep[1]=addr[2];}
-    //        }},
-    //        {PJRC_Board.Teensy_2, new BoardDefinition
-    //        {
-    //            MCU =      "ATMEGA32U4",
-    //            FlashSize = 31 * 1024,
-    //            BlockSize = 128,
-    //            DataOffset= 2,
-    //            AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1];}
-    //        }}
-    //    };
-
-    //    class BoardDefinition
-    //    {
-    //        public uint FlashSize;
-    //        public uint BlockSize;
-    //        public uint DataOffset;
-    //        public string MCU;
-    //        public Action<byte[], byte[]> AddrCopy;
-    //    }
-    //};
 }
 
 

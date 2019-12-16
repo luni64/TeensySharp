@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using TeensySharp.Implementation;
+using lunOptics.TeensySharp.Implementation;
 
-namespace TeensySharp.Interface
+namespace lunOptics.TeensySharp
 {
     public class Firmware
     {
