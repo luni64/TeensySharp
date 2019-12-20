@@ -39,6 +39,11 @@ namespace lunOptics.UsbTree.Implementation
             Port = null;
         }
         public string Port { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Description} {Port} ({vid:X4}/{pid:X4}) #{Serialnumber}";          
+        }
     }
 
     public class UsbHid : UsbDevice

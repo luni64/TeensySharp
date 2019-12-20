@@ -12,6 +12,9 @@ namespace lunOptics.UsbTree.Implementation
         IUsbDevice Parent { get;  }
         List<IUsbDevice> children { get; }        
         bool IsUsbInterface { get;  }
+
+        int vid { get; }
+        int pid { get; }
     }
 
     public interface IUsbSerial : IUsbDevice

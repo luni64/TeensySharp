@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using static lunOptics.UsbTree.Implementation.NativeUsb;
+using static lunOptics.UsbTree.Implementation.UsbWrappers;
 
 
 
@@ -12,46 +14,36 @@ namespace lunOptics.UsbTree.Implementation
 {
     public static class UsbTree
     {
+
+        public static void setCallback(Func<UsbDevice, UsbDevice> callback)
+        {
+            cb = callback;
+        }
+
+        static Func<UsbDevice, UsbDevice> cb = null;
+
         public static List<IUsbDevice> getDevices()
         {
-            UsbDevice usbdev;
             var devices = new List<IUsbDevice>();
 
-            deviceInfoSet = SetupDiGetClassDevs(IntPtr.Zero, "USB", IntPtr.Zero, (int)(DiGetClassFlags.DIGCF_ALLCLASSES | DiGetClassFlags.DIGCF_PRESENT));
-
-            for (uint index = 0; SetupDiEnumDeviceInfo(deviceInfoSet, index, ref deviceInfoData); index++)
+            using (var ctx = new InfoSetContext("USB"))
             {
-                var DeviceClassGuid = getDeviceProperty<Guid>(DevPropKeys.DeviceClassGuid);
-
-                if (DeviceClassGuid == DeviceClassGuids.Ports)        // SERIAL ----------------------   
+                foreach (var inst in ctx.getDeviceInstances())
                 {
-                    usbdev = new UsbSerial();
-                                       
-                    IntPtr h= SetupDiOpenDevRegKey(deviceInfoSet, ref deviceInfoData, (int)DICS_FLAG.DICS_FLAG_GLOBAL, 0, (int) DIREG.DIREG_DEV, 1);
-
-                    int sz = bufSize;
-                    IntPtr ip = IntPtr.Zero;
-                    int kind = 1;
-
-                    var res = RegQueryValueEx(h, "PortName", 0, ref kind, buffer, ref sz);
-                    var err = Marshal.GetLastWin32Error();
-                    ((UsbSerial)usbdev).Port = Marshal.PtrToStringAnsi(buffer);
-
+                    var name = inst.getProperty<string>(DevPropKey.DeviceDesc);
+                    Debug.WriteLine(name);
+                    inst.Dispose();
                 }
-                else if (DeviceClassGuid == DeviceClassGuids.HidClass) // HID -------------------------
-                {
-                    usbdev = new UsbHid();
-                }
-                else usbdev = new UsbDevice(DeviceClassGuid);
+            }
 
 
-                usbdev.DeviceInstanceId = getDeviceProperty<String>(DevPropKeys.DeviceInstanceId).ToUpper();
-                usbdev.DeviceClass = getDeviceProperty<String>(DevPropKeys.DeviceClass);
-                usbdev.ParentStr = getDeviceProperty<String>(DevPropKeys.Parent).ToUpper();
 
-                usbdev.Description = getDeviceProperty<String>(DevPropKeys.BusReportedDeviceDesc);
-                if (String.IsNullOrEmpty(usbdev.Description))
-                    usbdev.Description = getDeviceProperty<String>(DevPropKeys.DeviceDesc);
+            UsbWrappers.deviceInfoSet = SetupDiGetClassDevs(IntPtr.Zero, "USB", IntPtr.Zero, (int)(DiGetClassFlags.DIGCF_ALLCLASSES | DiGetClassFlags.DIGCF_PRESENT));
+            for (uint index = 0; SetupDiEnumDeviceInfo(UsbWrappers.deviceInfoSet, index, ref UsbWrappers.deviceInfoData); index++)
+            {
+                UsbDevice usbdev = new UsbDevice(UsbWrappers.deviceInfoData.ClassGuid);
+                usbdev.DeviceInstanceId = getDeviceProperty<string>(DevPropKey.DeviceInstanceId).ToUpper();
+
 
                 try
                 {
@@ -70,6 +62,41 @@ namespace lunOptics.UsbTree.Implementation
                 {
                     throw new UsbTreeException($"Error parsing DeviceInstanceId {usbdev.DeviceInstanceId}", innerException);
                 }
+
+
+                usbdev = cb?.Invoke(usbdev);
+
+                usbdev.DeviceClass = getDeviceProperty<String>(DevPropKey.DeviceClass);
+                usbdev.ParentStr = getDeviceProperty<String>(DevPropKey.Parent).ToUpper();
+                usbdev.Description = getDeviceProperty<String>(DevPropKey.BusReportedDeviceDesc) ?? getDeviceProperty<String>(DevPropKey.DeviceDesc);
+
+                if (usbdev == null)
+                {
+
+                    switch (deviceInfoData.ClassGuid)
+                    {
+                        case var g when (g == DeviceClassGuids.Ports):
+                            OpenDeviceRegistryKey();
+                            usbdev = new UsbSerial()
+                            {
+                                Port = getDeviceRegPropertry<string>("PortName"),
+                            };
+                            break;
+
+                        case var g when (g == DeviceClassGuids.HidClass):
+                            usbdev = new UsbHid();
+                            break;
+
+                        default:
+                            usbdev = new UsbDevice(deviceInfoData.ClassGuid);
+                            break;
+
+                    }
+
+                }
+
+
+
                 devices.Add(usbdev);
             }
             SetupDiDestroyDeviceInfoList(deviceInfoSet);
@@ -86,33 +113,19 @@ namespace lunOptics.UsbTree.Implementation
         public static void print(IUsbDevice d, int level = 0)
         {
             Debug.Write(new String(' ', level * 2));
-            Debug.WriteLine(d.ToString());
-            foreach (var c in d.children)
+            Debug.WriteLine(d.DeviceClass + " " + d.ToString());
+            foreach (var c in d.children)//.Where(c=>c.IsUsbInterface == false))
             {
                 print(c, level + 1);
             }
         }
 
-        private static SP_DEVINFO_DATA deviceInfoData = new SP_DEVINFO_DATA() { cbSize = (uint)Marshal.SizeOf(typeof(SP_DEVINFO_DATA)) };
-        private static IntPtr deviceInfoSet;
+        //private static SP_DEVINFO_DATA deviceInfoData = new SP_DEVINFO_DATA() { cbSize = (uint)Marshal.SizeOf(typeof(SP_DEVINFO_DATA)) };
+        //private static IntPtr deviceInfoSet;
 
         private const int bufSize = 1024;
         private static readonly IntPtr buffer = Marshal.AllocHGlobal(bufSize);
 
-        private static T getDeviceProperty<T>(DEVPROPKEY key)
-        {
-            if (true == SetupDiGetDevicePropertyW(deviceInfoSet, ref deviceInfoData, ref key, out ulong propertyType, buffer, bufSize, out int requiredSize, 0))
-            {
-                if (typeof(String).IsEquivalentTo(typeof(T)))
-                {
-                    return (T)(object)Marshal.PtrToStringAuto(buffer);
-                }
-                else if (typeof(Guid).IsEquivalentTo(typeof(T)))
-                {
-                    return (T)(object)Marshal.PtrToStructure<Guid>(buffer);
-                }
-            }
-            return default;
-        }
+
     }
 }

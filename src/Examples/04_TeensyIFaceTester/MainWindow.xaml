@@ -13,6 +13,14 @@
     </Window.DataContext>
 
     <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
         <ItemsControl ItemsSource="{Binding Teensies}" HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -41,6 +49,14 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
+        
+        <TreeView Grid.Column="1" ItemsSource="{Binding roots}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding children}">
+                    <TextBlock Text="{Binding }" />
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <Button Command="{Binding cmdScan}" Grid.Column="1" Grid.Row="1" Content="scan" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

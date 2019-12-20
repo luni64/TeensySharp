@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
+
+
 namespace lunOptics.UsbTree.Implementation
 {
     internal static class NativeUsb
-    {
+    {       
+
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr SetupDiGetClassDevs(IntPtr ClassGuid, string Enumerator, IntPtr hwndParent, int Flags);
 
@@ -37,6 +40,9 @@ namespace lunOptics.UsbTree.Implementation
 
         [DllImport("advapi32.dll", SetLastError = true)]
         internal static extern uint RegQueryValueEx(IntPtr hKey, string lpValueName, int lpReserved, ref int lpType, IntPtr lpData, ref int lpcbData);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        internal static extern int RegQueryValueEx(IntPtr hKey, string lpValueName, int lpReserved, ref int lpType, StringBuilder lpData, ref int lpcbData);
 
     }
 

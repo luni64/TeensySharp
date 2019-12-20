@@ -1,6 +1,7 @@
 ﻿using lunOptics.TeensySharp;
 using lunOptics.UsbTree.Implementation;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -10,20 +11,29 @@ namespace ViewModel
 {
     public class MainVM : BaseViewModel
     {
+        public RelayCommand cmdScan { get; private set; }
+        void doScan(object o)
+        {
+            var devices = UsbTree.getDevices();
+            roots = devices.Where(d => d.Parent == null).ToList();
+            OnPropertyChanged("roots");
+        }
+
         public ObservableCollection<TeensyVM> Teensies { get; }
+
+        public List<IUsbDevice> roots { get; private set; }
 
 
         public MainVM()
         {
-            var devices = UsbTree.getDevices();
+            cmdScan = new RelayCommand(doScan);
+            cmdScan.Execute(null);
+
+            var teensies = UsbTree.getDevices().Where(d=>d.vid == 0x16C0);
+                       
 
 
-            var rootDevices = devices.Where(d => d.Parent == null);
-
-            var ports = devices.OfType<IUsbSerial>();
-
-
-            foreach (var rootDevice in rootDevices)
+            foreach (var rootDevice in roots)
             {
                 UsbTree.print(rootDevice);
             }
@@ -32,7 +42,7 @@ namespace ViewModel
           
             //var hids =  (IUsbSerial) UsbTree.getDevices().Where(d => d is IUsbSerial);
 
-            var p = ports.FirstOrDefault().Port;
+            //var p = ports.FirstOrDefault().Port;
 
 
             TeensySharp.SynchronizationContext(SynchronizationContext.Current);
