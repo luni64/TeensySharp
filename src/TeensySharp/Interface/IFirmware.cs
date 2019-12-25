@@ -6,7 +6,8 @@ namespace lunOptics.TeensySharp
 {
     public interface IFirmware
     {
-        byte[] image { get; }
+        byte[] Getimage();
+
         PJRC_Board boardType { get; }
     }
 }

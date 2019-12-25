@@ -14,21 +14,21 @@ namespace lunOptics.TeensySharp.Implementation
     internal class Teensy : ITeensy
     {
         #region Implementation of ITeensy --------------------------------
-        public UsbTypes UsbType 
+        public UsbType UsbType 
         {
             get => _usbType;
             internal set => SetProperty(ref _usbType, value);
         }
-        private UsbTypes _usbType;
+        private UsbType _usbType;
 
         public string description { get; private set; }
 
-        public UsbSubTypes UsbSubType
+        public UsbSubType UsbSubType
         {
             get => _usbSubType;
             internal set => SetProperty(ref _usbSubType, value);
         }
-        private UsbSubTypes _usbSubType;
+        private UsbSubType _usbSubType;
 
 
         public PJRC_Board BoardType { get; internal set; }
@@ -45,9 +45,9 @@ namespace lunOptics.TeensySharp.Implementation
                     case PJRC_Board.Teensy_LC: return $"Teensy LC ({Serialnumber})";
                     case PJRC_Board.Teensy_30: return $"Teensy 3.0 ({Serialnumber})";
                     case PJRC_Board.Teensy_31_2: return $"Teensy 3.2 ({Serialnumber})";
-                    case PJRC_Board.Teensy_35: return $"Teensy 3.5 ({Serialnumber})";
-                    case PJRC_Board.Teensy_36: return $"Teensy 3.6 ({Serialnumber})";
-                    case PJRC_Board.Teensy_40: return $"Teensy 4.0 ({Serialnumber})";
+                    case PJRC_Board.Teensy35: return $"Teensy 3.5 ({Serialnumber})";
+                    case PJRC_Board.Teensy36: return $"Teensy 3.6 ({Serialnumber})";
+                    case PJRC_Board.Teensy40: return $"Teensy 4.0 ({Serialnumber})";
                     case PJRC_Board.unknown: return $"Unknown Board ({Serialnumber})";
                     default: return null;
                 }
@@ -58,10 +58,10 @@ namespace lunOptics.TeensySharp.Implementation
         { 
             switch (UsbType)
             {
-                case UsbTypes.HalfKay:
+                case UsbType.HalfKay:
                     return true;
 
-                case UsbTypes.Serial:
+                case UsbType.Serial:
                     using (ISerialPortStream port = new SerialPortStream(this.Port))
                     {
                         port.Open();
@@ -69,7 +69,7 @@ namespace lunOptics.TeensySharp.Implementation
                     }
                     break;
 
-                case UsbTypes.HID:
+                case UsbType.HID:
                     hidDevice.WriteFeatureData(new byte[] { 0x00, 0xA9, 0x45, 0xC2, 0x6B });
                     break;
 
@@ -88,7 +88,7 @@ namespace lunOptics.TeensySharp.Implementation
             }
             if (device == null) return false; // Didn't find a HalfKayed board with requested serialnumber
 
-            this.UsbType = UsbTypes.HalfKay;
+            this.UsbType = UsbType.HalfKay;
             this.hidDevice = device;
             this.Port = "";
 
@@ -98,7 +98,7 @@ namespace lunOptics.TeensySharp.Implementation
         public bool Reset()
         {
             Reboot();
-            if (UsbType != UsbTypes.HalfKay) return false;
+            if (UsbType != UsbType.HalfKay) return false;
 
             var rebootReport = hidDevice.CreateReport();
             rebootReport.Data[0] = 0xFF;
@@ -113,17 +113,17 @@ namespace lunOptics.TeensySharp.Implementation
         {
             if (checkType && firmware.boardType != BoardType) return false;
 
-            if (UsbType != UsbTypes.HalfKay)
+            if (UsbType != UsbType.HalfKay)
             {
                 Reboot();
             }
-            if (UsbType != UsbTypes.HalfKay) return false; // wasn't able to start bootloader
+            if (UsbType != UsbType.HalfKay) return false; // wasn't able to start bootloader
 
             var BoardDef = BoardDefinitions[BoardType];
             uint addr = 0;
 
             //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
-            foreach (var dataBlock in firmware.image.Batch((int)BoardDef.BlockSize))
+            foreach (var dataBlock in firmware.Getimage().Batch((int)BoardDef.BlockSize))
             {
                 if (dataBlock.Any(d => d != 0xFF) || addr == 0) //skip empty blocks but always write first block to erase chip
                 {
@@ -203,7 +203,7 @@ namespace lunOptics.TeensySharp.Implementation
 
         private static Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
         {
-            { PJRC_Board.Teensy_40, new BoardDefinition
+            { PJRC_Board.Teensy40, new BoardDefinition
             {
                 MCU =       "IMXRT1062",
                 FlashSize = 2048 * 1024,
@@ -212,7 +212,7 @@ namespace lunOptics.TeensySharp.Implementation
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            { PJRC_Board.Teensy_36, new BoardDefinition
+            { PJRC_Board.Teensy36, new BoardDefinition
             {
                 MCU =       "MK66FX1M0",
                 FlashSize = 1024 * 1024,
@@ -221,7 +221,7 @@ namespace lunOptics.TeensySharp.Implementation
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            { PJRC_Board.Teensy_35, new BoardDefinition
+            { PJRC_Board.Teensy35, new BoardDefinition
             {
                 MCU=       "MK64FX512",
                 FlashSize = 512 * 1024,

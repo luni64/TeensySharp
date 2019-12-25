@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Threading;
+using static System.Globalization.CultureInfo;
 
 namespace lunOptics.TeensySharp
 {
@@ -20,8 +21,8 @@ namespace lunOptics.TeensySharp
         #region Construction / Destruction ------------------------------------------
         static TeensySharp()
         {
-            ConnectedBoards = new List<ITeensy>();
-            CachedBoards = new List<ITeensy>();
+            // ConnectedBoards = new List<ITeensy>();
+            // CachedBoards = new List<ITeensy>();
 
             using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE " + vidStr))
             {
@@ -40,16 +41,16 @@ namespace lunOptics.TeensySharp
         #endregion
 
         #region Properties and Events -----------------------------------------------
-        public static List<ITeensy> ConnectedBoards { get; }
+        public static List<ITeensy> ConnectedBoards { get; } = new List<ITeensy>();
 
         public static SynchronizationContext ctx { get; set; } = null;
 
-        static public void SynchronizationContext(SynchronizationContext _ctx)
+        static public void SetSynchronizationContext(SynchronizationContext context)
         {
-            ctx = _ctx;
+            ctx = context;
         }
 
-        static public event EventHandler<ConnectedBoardsChangedArgs> ConnectedBoardsChanged;
+        static public event EventHandler<ConnectedBoardsChangedEventArgs> ConnectedBoardsChanged;
         #endregion
 
         #region Port Watching  ------------------------------------------------------
@@ -123,14 +124,14 @@ namespace lunOptics.TeensySharp
                 }
                 else
                 {
-                    device.UsbType = UsbTypes.disconnected;  // user may hold reference to the board outside the list
+                    device.UsbType = UsbType.disconnected;  // user may hold reference to the board outside the list
                     ConnectedBoards.Remove(device);
                 }
-                ConnectedBoardsChanged.ThreadAwareRaise(ctx, null, new ConnectedBoardsChangedArgs(type, device));
+                ConnectedBoardsChanged.ThreadAwareRaise(ctx, null, new ConnectedBoardsChangedEventArgs(type, device));
             }
         }
 
-        private static List<ITeensy> CachedBoards;
+        private static readonly List<ITeensy> CachedBoards = new List<ITeensy>();
 
         #endregion
 
@@ -172,16 +173,16 @@ namespace lunOptics.TeensySharp
                     case 0x1E: board = PJRC_Board.Teensy_31_2; break;
                     case 0x20: board = PJRC_Board.Teensy_LC; break;
                     case 0x21: board = PJRC_Board.Teensy_31_2; break;
-                    case 0x1F: board = PJRC_Board.Teensy_35; break;
-                    case 0x22: board = PJRC_Board.Teensy_36; break;
-                    case 0x24: board = PJRC_Board.Teensy_40; break;
+                    case 0x1F: board = PJRC_Board.Teensy35; break;
+                    case 0x22: board = PJRC_Board.Teensy36; break;
+                    case 0x24: board = PJRC_Board.Teensy40; break;
                     default: board = PJRC_Board.unknown; break;
                 }
 
                 return new Teensy
                 {
-                    UsbType = UsbTypes.HalfKay,
-                    UsbSubType = UsbSubTypes.none,
+                    UsbType = UsbType.HalfKay,
+                    UsbSubType = UsbSubType.none,
                     Port = "",
                     Serialnumber = serNum,
                     BoardType = board,
@@ -191,85 +192,85 @@ namespace lunOptics.TeensySharp
 
             else // Serial or HID
             {
-                uint serNum = Convert.ToUInt32(DeviceIdParts[2]);  // these devices code the S/N as decimal number
+                uint serNum = Convert.ToUInt32(DeviceIdParts[2], InvariantCulture);  // these devices code the S/N as decimal number
 
-                var hwid = ((string[])mgmtObj["HardwareID"])[0];
-                switch (hwid.Substring(hwid.IndexOf("REV_") + 4, 4))
+                var hwid = ((string[])mgmtObj["HardwareID"])[0];                
+                switch (hwid.Substring(hwid.IndexOf("REV_",StringComparison.InvariantCultureIgnoreCase) + 4, 4))
                 {
                     case "0273": board = PJRC_Board.Teensy_LC; break;
                     case "0274": board = PJRC_Board.Teensy_30; break;
                     case "0275": board = PJRC_Board.Teensy_31_2; break;
-                    case "0276": board = PJRC_Board.Teensy_35; break;
-                    case "0277": board = PJRC_Board.Teensy_36; break;
-                    case "0279": board = PJRC_Board.Teensy_40; break;
+                    case "0276": board = PJRC_Board.Teensy35; break;
+                    case "0277": board = PJRC_Board.Teensy36; break;
+                    case "0279": board = PJRC_Board.Teensy40; break;
                     default: board = PJRC_Board.unknown; break;
                 }
 
-                UsbTypes t;
-                UsbSubTypes st;
+                UsbType t;
+                UsbSubType st;
 
 
                 switch (pid)
                 {
                     case 0x0476:
-                        t = UsbTypes.HID;
-                        st = UsbSubTypes.Everything;
+                        t = UsbType.HID;
+                        st = UsbSubType.Everything;
                         break;
                     case 0x0482:
-                        t = UsbTypes.HID;
-                        st = UsbSubTypes.Keyboard_Mouse_Joystick;
+                        t = UsbType.HID;
+                        st = UsbSubType.Keyboard_Mouse_Joystick;
                         break;
                     case 0x0483:
-                        t = UsbTypes.Serial;
-                        st = UsbSubTypes.none;
+                        t = UsbType.Serial;
+                        st = UsbSubType.none;
                         break;
                     case 0x0485:
-                        t = UsbTypes.HID;
-                        st = UsbSubTypes.MIDI;
+                        t = UsbType.HID;
+                        st = UsbSubType.MIDI;
                         break;
                     case 0x0486:
-                        st = UsbSubTypes.RawHID;
-                        t = UsbTypes.HID;
+                        st = UsbSubType.RawHID;
+                        t = UsbType.HID;
                         break;
                     case 0x0487:
-                        t = UsbTypes.Serial;
-                        st = UsbSubTypes.Serial_Keyboard_Mouse_Joystick;
+                        t = UsbType.Serial;
+                        st = UsbSubType.SerialKeyboardMouseJoystick;
                         break;
                     case 0x0488:
-                        t = UsbTypes.HID;
-                        st = UsbSubTypes.FlightSim;
+                        t = UsbType.HID;
+                        st = UsbSubType.FlightSim;
                         break;
                     case 0x0489:
-                        t = UsbTypes.Serial;
-                        st = UsbSubTypes.Serial_MIDI;
+                        t = UsbType.Serial;
+                        st = UsbSubType.SerialMIDI;
                         break;
                     case 0x048A:
-                        t = UsbTypes.Serial;
-                        st = UsbSubTypes.Serial_MIDI_Audio;
+                        t = UsbType.Serial;
+                        st = UsbSubType.SerialMIDIAudio;
                         break;
                     case 0x04D0:
-                        t = UsbTypes.HID;
-                        st = UsbSubTypes.Keyboard;
+                        t = UsbType.HID;
+                        st = UsbSubType.Keyboard;
                         break;
                     case 0x04D1:
-                        t = UsbTypes.unknown;
-                        st = UsbSubTypes.MTP_Disk;
+                        t = UsbType.unknown;
+                        st = UsbSubType.MTP_Disk;
                         break;
                     case 0x04D2:
-                        t = UsbTypes.unknown;
-                        st = UsbSubTypes.Audio;
+                        t = UsbType.unknown;
+                        st = UsbSubType.Audio;
                         break;
                     case 0x04D3:
-                        t = UsbTypes.HID;
-                        st = UsbSubTypes.Keyboard_Touchscreen;
+                        t = UsbType.HID;
+                        st = UsbSubType.Keyboard_Touchscreen;
                         break;
                     case 0x04D4:
-                        t = UsbTypes.HID;
-                        st = UsbSubTypes.Keyboard_Mouse_Touchscreen; break;
+                        t = UsbType.HID;
+                        st = UsbSubType.Keyboard_Mouse_Touchscreen; break;
 
                     default:
-                        t = UsbTypes.unknown;
-                        st = UsbSubTypes.none; break;
+                        t = UsbType.unknown;
+                        st = UsbSubType.none; break;
                 }
 
 
@@ -285,8 +286,8 @@ namespace lunOptics.TeensySharp
                     d.ReadFeatureData(out byte[] features);
                     string sfeatures = System.Text.Encoding.Unicode.GetString(features).TrimEnd("\0".ToArray());
 
-                    
-                    
+
+
 
 
                 }
@@ -319,17 +320,17 @@ namespace lunOptics.TeensySharp
         private const int pjrcVid = 0x16C0;
         private const int serPid = 0x483;
         private const int halfKayPid = 0x478;
-        private static readonly string vidStr = "'%USB_VID[_]" + pjrcVid.ToString("X") + "%'";
+        private static readonly string vidStr = "'%USB_VID[_]" + pjrcVid.ToString("X", InvariantCulture) + "%'";
 
         #endregion       
     }
 
-    public class ConnectedBoardsChangedArgs : EventArgs
+    public class ConnectedBoardsChangedEventArgs : EventArgs
     {
-        public readonly ChangeType changeType;
-        public readonly ITeensy changedDevice;
+        public ChangeType changeType { get; }
+        public ITeensy changedDevice { get; }
 
-        public ConnectedBoardsChangedArgs(ChangeType type, ITeensy changedDevice)
+        public ConnectedBoardsChangedEventArgs(ChangeType type, ITeensy changedDevice)
         {
             this.changeType = type;
             this.changedDevice = changedDevice;

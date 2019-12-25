@@ -16,7 +16,7 @@ namespace TeensyWatcherConsole
             Console.WriteLine("Currently the following Teensies are connected:");
             foreach (var Teensy in TeensySharpLib.ConnectedBoards)
             {
-                if (Teensy.UsbType == UsbTypes.Serial)
+                if (Teensy.UsbType == UsbType.Serial)
                 {
                     Console.WriteLine("USBSerial: Serialnumber {0}, on {1}", Teensy.Serialnumber, Teensy.Port);
                 }
@@ -26,7 +26,7 @@ namespace TeensyWatcherConsole
             // Here is a good place to construct a SerialPort Object
             // For the sake of simplicity lets take the first one from the list
             var myTeensy = TeensySharpLib.ConnectedBoards.FirstOrDefault();
-            if (myTeensy != null && myTeensy.UsbType == UsbTypes.Serial)
+            if (myTeensy != null && myTeensy.UsbType == UsbType.Serial)
             {
                 using (var Com = new SerialPort(myTeensy.Port))
                 {
@@ -47,7 +47,7 @@ namespace TeensyWatcherConsole
         //-------------------------------------------------------------------------------------------------------------------
         //In a real application you would use this eventhandler to inform the user, connect / disconnect the SerialPort etc..
         //
-        static void ConnectedTeensiesChanged(object sender, ConnectedBoardsChangedArgs e)
+        static void ConnectedTeensiesChanged(object sender, ConnectedBoardsChangedEventArgs e)
         {
             // Write information about the added or removed Teensy to the console         
 
@@ -55,7 +55,7 @@ namespace TeensyWatcherConsole
 
             switch (Teensy.UsbType)
             {
-                case UsbTypes.HalfKay:
+                case UsbType.HalfKay:
                     if (e.changeType == ChangeType.add)
                     {
                         Console.WriteLine("Teensy {0} connected (running HalfKay)", Teensy.Serialnumber);
@@ -66,7 +66,7 @@ namespace TeensyWatcherConsole
                     }
                     break;
 
-                case UsbTypes.Serial:
+                case UsbType.Serial:
                     if (e.changeType == ChangeType.add)
                     {
                         Console.WriteLine("Teensy {0} connected on {1}", Teensy.Serialnumber, Teensy.Port);

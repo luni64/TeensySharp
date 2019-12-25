@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-
-
-namespace lunOptics.UsbTree.Implementation
+namespace lunOptics.LibUsbTree.Implementation
 {
-    internal static class NativeUsb
-    {       
-
-        [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
+    internal static class NativeMethods
+    { 
+        [DllImport("setupapi.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr SetupDiGetClassDevs(IntPtr ClassGuid, string Enumerator, IntPtr hwndParent, int Flags);
 
         [DllImport("setupapi.dll", SetLastError = true)]
@@ -31,17 +28,16 @@ namespace lunOptics.UsbTree.Implementation
                UInt32 flags);
 
 
-        [DllImport("setupapi.dll", SetLastError = true)]
+        [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode) ]
         internal static extern int CM_Get_Device_ID(uint dnDevInst, StringBuilder Buffer, int BufferLen, int ulFlags = 0);
-
 
         [DllImport("Setupapi", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern IntPtr SetupDiOpenDevRegKey(IntPtr hDeviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, int scope, int hwProfile, int parameterRegistryValueKind, int samDesired);
 
-        [DllImport("advapi32.dll", SetLastError = true)]
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern uint RegQueryValueEx(IntPtr hKey, string lpValueName, int lpReserved, ref int lpType, IntPtr lpData, ref int lpcbData);
 
-        [DllImport("advapi32.dll", SetLastError = true)]
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern int RegQueryValueEx(IntPtr hKey, string lpValueName, int lpReserved, ref int lpType, StringBuilder lpData, ref int lpcbData);
 
     }
@@ -66,6 +62,10 @@ namespace lunOptics.UsbTree.Implementation
         public IntPtr Reserved;
     }
 
+#pragma warning disable CA1712 // Do not prefix enum values with type name
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+#pragma warning disable CA1051 // Do not declare visible instance fields
+
     // Device Property
     [StructLayout(LayoutKind.Sequential)]
     public struct DEVPROPKEY
@@ -73,6 +73,9 @@ namespace lunOptics.UsbTree.Implementation
         public Guid fmtid;
         public UInt32 pid;
     }
+
+#pragma warning restore CA1051 // Do not declare visible instance fields
+#pragma warning restore CA1815 // Override equals and operator equals on value types
 
     /// <summary>
     /// KeyType values for SetupDiCreateDevRegKey, SetupDiOpenDevRegKey, and SetupDiDeleteDevRegKey.
@@ -115,5 +118,6 @@ namespace lunOptics.UsbTree.Implementation
         /// </summary>
         DICS_FLAG_CONFIGGENERAL = 0x00000004,
     }
+#pragma warning restore CA1712 // Do not prefix enum values with type name
 
 }

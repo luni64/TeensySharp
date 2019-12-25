@@ -4,7 +4,7 @@ using lunOptics.TeensySharp.Implementation;
 
 namespace lunOptics.TeensySharp
 {
-    public class Firmware
+    public static class Firmware
     {
         static public IFirmware Parse(TextReader hexStream)
         {

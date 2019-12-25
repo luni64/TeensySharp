@@ -6,9 +6,9 @@ namespace lunOptics.TeensySharp
 {
     public enum PJRC_Board
     {
-        Teensy_40,
-        Teensy_36,
-        Teensy_35,
+        Teensy40,
+        Teensy36,
+        Teensy35,
         Teensy_31_2,
         Teensy_30,
         Teensy_LC,
@@ -17,13 +17,13 @@ namespace lunOptics.TeensySharp
         unknown,
     }
 
-    public enum UsbSubTypes
+    public enum UsbSubType
     {
         none,
         RawHID,       
-        Serial_Keyboard_Mouse_Joystick,
-        Serial_MIDI,
-        Serial_MIDI_Audio,
+        SerialKeyboardMouseJoystick,
+        SerialMIDI,
+        SerialMIDIAudio,
         Keyboard,
         Keyboard_Touchscreen,
         Keyboard_Mouse_Joystick,
@@ -35,7 +35,7 @@ namespace lunOptics.TeensySharp
         Everything,
     }
 
-    public enum UsbTypes
+    public enum UsbType
     {
         disconnected,
         HalfKay,
@@ -46,8 +46,8 @@ namespace lunOptics.TeensySharp
 
     public interface ITeensy: INotifyPropertyChanged
     {
-        UsbTypes UsbType { get; }
-        UsbSubTypes UsbSubType { get; }
+        UsbType UsbType { get; }
+        UsbSubType UsbSubType { get; }
 
 
         uint Serialnumber { get; }

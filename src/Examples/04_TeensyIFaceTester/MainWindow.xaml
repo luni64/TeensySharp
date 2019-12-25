@@ -50,13 +50,14 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         
-        <TreeView Grid.Column="1" ItemsSource="{Binding roots}">
+        <TreeView Grid.Column="1" ItemsSource="{Binding tree.Roots}">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding children}">
-                    <TextBlock Text="{Binding }" />
+                    <TextBlock Text="{Binding Description, Mode=OneWay}" />
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
+        <!--<ListView Grid.Column ="1" ItemsSource="{Binding roots}" DisplayMemberPath="Description" />-->
         <Button Command="{Binding cmdScan}" Grid.Column="1" Grid.Row="1" Content="scan" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace HidLibrary
 {
+#pragma warning disable CA1063 // Implement IDisposable Correctly
     public class HidDevice : IHidDevice
+#pragma warning restore CA1063 // Implement IDisposable Correctly
     {
         public event InsertedEventHandler Inserted;
         public event RemovedEventHandler Removed;
@@ -17,7 +19,7 @@ namespace HidLibrary
         private readonly HidDeviceCapabilities _deviceCapabilities;
         private DeviceMode _deviceReadMode = DeviceMode.NonOverlapped;
         private DeviceMode _deviceWriteMode = DeviceMode.NonOverlapped;
-        private ShareMode _deviceShareMode = ShareMode.ShareRead | ShareMode.ShareWrite;
+        private ShareModes _deviceShareMode = ShareModes.ShareRead | ShareModes.ShareWrite;
 
         private readonly HidDeviceEventMonitor _deviceEventMonitor;
 
@@ -80,10 +82,10 @@ namespace HidLibrary
 
         public void OpenDevice()
         {
-            OpenDevice(DeviceMode.NonOverlapped, DeviceMode.NonOverlapped, ShareMode.ShareRead | ShareMode.ShareWrite);
+            OpenDevice(DeviceMode.NonOverlapped, DeviceMode.NonOverlapped, ShareModes.ShareRead | ShareModes.ShareWrite);
         }
 
-        public void OpenDevice(DeviceMode readMode, DeviceMode writeMode, ShareMode shareMode)
+        public void OpenDevice(DeviceMode readMode, DeviceMode writeMode, ShareModes shareMode)
         {
             if (IsOpen) return;
 
@@ -685,10 +687,10 @@ namespace HidLibrary
 
         private static IntPtr OpenDeviceIO(string devicePath, uint deviceAccess)
         {
-            return OpenDeviceIO(devicePath, DeviceMode.NonOverlapped, deviceAccess, ShareMode.ShareRead | ShareMode.ShareWrite);
+            return OpenDeviceIO(devicePath, DeviceMode.NonOverlapped, deviceAccess, ShareModes.ShareRead | ShareModes.ShareWrite);
         }
 
-        private static IntPtr OpenDeviceIO(string devicePath, DeviceMode deviceMode, uint deviceAccess, ShareMode shareMode)
+        private static IntPtr OpenDeviceIO(string devicePath, DeviceMode deviceMode, uint deviceAccess, ShareModes shareMode)
         {
             var security = new NativeMethods.SECURITY_ATTRIBUTES();
             var flags = 0;
@@ -714,7 +716,7 @@ namespace HidLibrary
         private void DeviceEventMonitorInserted()
         {
             if (!IsOpen) OpenDevice(_deviceReadMode, _deviceWriteMode, _deviceShareMode);
-            if (Inserted != null) Inserted();
+            Inserted?.Invoke();
         }
 
         private void DeviceEventMonitorRemoved()

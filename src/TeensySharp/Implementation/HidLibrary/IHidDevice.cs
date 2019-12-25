@@ -13,7 +13,7 @@ namespace HidLibrary
     }
 
     [Flags]
-    public enum ShareMode
+    public enum ShareModes
     {
         Exclusive = 0,
         ShareRead = NativeMethods.FILE_SHARE_READ,
@@ -41,7 +41,7 @@ namespace HidLibrary
 
         void OpenDevice();
 
-        void OpenDevice(DeviceMode readMode, DeviceMode writeMode, ShareMode shareMode);
+        void OpenDevice(DeviceMode readMode, DeviceMode writeMode, ShareModes shareMode);
         
         void CloseDevice();
 

@@ -36,6 +36,8 @@ namespace HidLibrary
 		    public bool bInheritHandle;
 	    }
 
+#pragma warning disable CA2101 // Specify marshaling for P/Invoke string arguments
+
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto)]
         static internal extern bool CancelIo(IntPtr hFile);
 
@@ -48,8 +50,8 @@ namespace HidLibrary
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto)]
         static internal extern bool CancelSynchronousIo(IntPtr hObject);
 
-	    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-	    static internal extern IntPtr CreateEvent(ref SECURITY_ATTRIBUTES securityAttributes, int bManualReset, int bInitialState, string lpName);
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+		static internal extern IntPtr CreateEvent(ref SECURITY_ATTRIBUTES securityAttributes, int bManualReset, int bInitialState, string lpName);
 
 	    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 	    static internal extern IntPtr CreateFile(string lpFileName, uint dwDesiredAccess, int dwShareMode, ref SECURITY_ATTRIBUTES lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, int hTemplateFile);
@@ -65,6 +67,7 @@ namespace HidLibrary
 
         [DllImport("kernel32.dll")]
         static internal extern bool WriteFile(IntPtr hFile, byte[] lpBuffer, uint nNumberOfBytesToWrite, out uint lpNumberOfBytesWritten, [In] ref System.Threading.NativeOverlapped lpOverlapped);
+
 
 	    internal const int DBT_DEVICEARRIVAL = 0x8000;
 	    internal const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
@@ -112,45 +115,45 @@ namespace HidLibrary
 
         internal const int SPDRP_UPPERFILTERS = 0x11;
 
-	    [StructLayout(LayoutKind.Sequential)]
-	    internal class DEV_BROADCAST_DEVICEINTERFACE
-	    {
-		    internal int dbcc_size;
-		    internal int dbcc_devicetype;
-		    internal int dbcc_reserved;
-		    internal Guid dbcc_classguid;
-		    internal short dbcc_name;
-	    }
+	    //[StructLayout(LayoutKind.Sequential)]
+	    //internal class DEV_BROADCAST_DEVICEINTERFACE
+	    //{
+		   // internal int dbcc_size;
+		   // internal int dbcc_devicetype;
+		   // internal int dbcc_reserved;
+		   // internal Guid dbcc_classguid;
+		   // internal short dbcc_name;
+	    //}
 
-	    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-	    internal class DEV_BROADCAST_DEVICEINTERFACE_1
-	    {
-		    internal int dbcc_size;
-		    internal int dbcc_devicetype;
-		    internal int dbcc_reserved;
-		    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)]
-		    internal byte[] dbcc_classguid;
-		    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
-		    internal char[] dbcc_name;
-	    }
+	    //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	    //internal class DEV_BROADCAST_DEVICEINTERFACE_1
+	    //{
+		   // internal int dbcc_size;
+		   // internal int dbcc_devicetype;
+		   // internal int dbcc_reserved;
+		   // [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)]
+		   // internal byte[] dbcc_classguid;
+		   // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
+		   // internal char[] dbcc_name;
+	    //}
 
-	    [StructLayout(LayoutKind.Sequential)]
-	    internal class DEV_BROADCAST_HANDLE
-	    {
-		    internal int dbch_size;
-		    internal int dbch_devicetype;
-		    internal int dbch_reserved;
-		    internal int dbch_handle;
-		    internal int dbch_hdevnotify;
-	    }
+	    //[StructLayout(LayoutKind.Sequential)]
+	    //internal class DEV_BROADCAST_HANDLE
+	    //{
+		   // internal int dbch_size;
+		   // internal int dbch_devicetype;
+		   // internal int dbch_reserved;
+		   // internal int dbch_handle;
+		   // internal int dbch_hdevnotify;
+	    //}
 
-	    [StructLayout(LayoutKind.Sequential)]
-	    internal class DEV_BROADCAST_HDR
-	    {
-		    internal int dbch_size;
-		    internal int dbch_devicetype;
-		    internal int dbch_reserved;
-	    }
+	    //[StructLayout(LayoutKind.Sequential)]
+	    //internal class DEV_BROADCAST_HDR
+	    //{
+		   // internal int dbch_size;
+		   // internal int dbch_devicetype;
+		   // internal int dbch_reserved;
+	    //}
 
 	    [StructLayout(LayoutKind.Sequential)]
 	    internal struct SP_DEVICE_INTERFACE_DATA
@@ -342,3 +345,5 @@ namespace HidLibrary
         internal static extern bool HidD_GetSerialNumberString(IntPtr hidDeviceObject, ref byte lpReportBuffer, int reportBufferLength);
     }
 }
+
+#pragma warning restore CA2101 // Specify marshaling for P/Invoke string arguments

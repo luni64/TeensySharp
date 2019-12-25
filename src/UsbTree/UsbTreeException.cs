@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace lunOptics.UsbTree
+namespace lunOptics.LibUsbTree
 {
     [Serializable]
     public class UsbTreeException : Exception
@@ -17,5 +17,10 @@ namespace lunOptics.UsbTree
         public UsbTreeException(string message, Exception innerException)
             : base(message, innerException)
         { }
+
+        protected UsbTreeException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

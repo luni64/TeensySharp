@@ -4,6 +4,8 @@ using System.IO;
 using System.Text;
 using lunOptics.TeensySharp;
 using System.Linq;
+using static System.Globalization.CultureInfo;
+
 
 namespace lunOptics.TeensySharp.Implementation
 {
@@ -24,10 +26,25 @@ namespace lunOptics.TeensySharp.Implementation
                 }
             }
         }
+
+        #endregion
+        #region IFirmware implementation -----------------------------------------------
+        private byte[] image1 = null;
         #endregion
 
         #region IFirmware implementation -----------------------------------------------
-        public byte[] image { get; private set; } = null;
+        public byte[] Getimage()
+        {
+            return image1;
+        }
+        #endregion
+
+        #region IFirmware implementation -----------------------------------------------
+        private void Setimage(byte[] value)
+        {
+            image1 = value;
+        }
+
         public PJRC_Board boardType { get; private set; } = PJRC_Board.unknown;
         #endregion
 
@@ -55,19 +72,19 @@ namespace lunOptics.TeensySharp.Implementation
 
             if (records[0].type == RecordType.ExLinAdr && records[0].data[0] == 0x60 && records[0].data[1] == 0x00) // check if we have a T4.0
             {
-                image = Enumerable.Repeat((byte)0xFF, maxAddr - 0x6000_0000).ToArray();
+                Setimage(Enumerable.Repeat((byte)0xFF, maxAddr - 0x6000_0000).ToArray());
                 foreach (var record in records.Where(r => r.type == RecordType.Data))
                 {
-                    record.data.CopyTo(image, record.addr - 0x6000_0000);
+                    record.data.CopyTo(Getimage(), record.addr - 0x6000_0000);
                 }
-                boardType = PJRC_Board.Teensy_40;
+                boardType = PJRC_Board.Teensy40;
             }
             else
             {
-                image = Enumerable.Repeat((byte)0xFF, maxAddr).ToArray();
+                Setimage(Enumerable.Repeat((byte)0xFF, maxAddr).ToArray());
                 foreach (var record in records.Where(r => r.type == RecordType.Data))
                 {
-                    record.data.CopyTo(image, record.addr);
+                    record.data.CopyTo(Getimage(), record.addr);
                 }
                 boardType = IdentifyModel();
             }
@@ -78,9 +95,9 @@ namespace lunOptics.TeensySharp.Implementation
         {
             PJRC_Board board = PJRC_Board.unknown;
             const uint startup_size = 0x400;
-            if (image.Length >= startup_size)
+            if (Getimage().Length >= startup_size)
             {
-                UInt32 reset_handler_addr = BitConverter.ToUInt32(image, 4);
+                UInt32 reset_handler_addr = BitConverter.ToUInt32(Getimage(), 4);
                 if (reset_handler_addr >= startup_size) return PJRC_Board.unknown;
 
                 UInt32 magic_check;
@@ -99,11 +116,11 @@ namespace lunOptics.TeensySharp.Implementation
                         magic_check = 0x00003F82;
                         break;
                     case 0x199:
-                        board = PJRC_Board.Teensy_35;
+                        board = PJRC_Board.Teensy35;
                         magic_check = 0x00043F82;
                         break;
                     case 0x1D1:
-                        board = PJRC_Board.Teensy_36;
+                        board = PJRC_Board.Teensy36;
                         magic_check = 0x00043F82;
                         break;
                     default:
@@ -114,7 +131,7 @@ namespace lunOptics.TeensySharp.Implementation
 
                 for (int offs = (int)reset_handler_addr; offs < startup_size - 4; offs++)
                 {
-                    UInt32 value4 = BitConverter.ToUInt32(image, offs);
+                    UInt32 value4 = BitConverter.ToUInt32(Getimage(), offs);
                     if (value4 == magic_check)
                     {
                         return board;
@@ -124,7 +141,7 @@ namespace lunOptics.TeensySharp.Implementation
             return PJRC_Board.unknown;
         }
 
-        private HexDataRecord ParseRecord(string line, ref int SEGBA, ref int ULBA)
+        private static HexDataRecord ParseRecord(string line, ref int SEGBA, ref int ULBA)
         {
             var record = new HexDataRecord();
 
@@ -132,7 +149,7 @@ namespace lunOptics.TeensySharp.Implementation
             {
                 byte RecLen = Convert.ToByte(line.Substring(1, 2), 16);
                 int DRLO = Convert.ToUInt16(line.Substring(3, 4), 16);  // Data Record Load Offset
-                record.type = (RecordType)Convert.ToByte(line.Substring(7, 2));
+                record.type = (RecordType)Convert.ToByte(line.Substring(7, 2),InvariantCulture);
 
                 if (line.Length == 11 + 2 * RecLen)
                 {

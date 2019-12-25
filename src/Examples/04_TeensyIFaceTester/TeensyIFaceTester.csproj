@@ -7,7 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.ObjectModel" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\TeensySharp\TeensySharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="LibUsbTree">
+      <HintPath>..\..\..\..\LibUsbTree\LibUsbTree\bin\Release\netstandard2.0\LibUsbTree.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   

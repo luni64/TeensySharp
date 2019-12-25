@@ -2,6 +2,8 @@
 using System.Linq;
 using System.IO;
 using lunOptics.TeensySharp;
+using System.Diagnostics.Contracts;
+using static System.Globalization.CultureInfo;
 
 namespace lunOptics.TeensySharp.Implementation
 {
@@ -11,9 +13,11 @@ namespace lunOptics.TeensySharp.Implementation
         static uint SEGBA; // Segment Base Address
 
         static public bool ParseStream(TextReader r, byte[] Image)
-        {
+        {            
             ULBA = 0;
             SEGBA = 0;
+
+            Contract.Requires(r != null);
 
             string line = r.ReadLine();
             while (line != null)
@@ -26,10 +30,12 @@ namespace lunOptics.TeensySharp.Implementation
 
         static public PJRC_Board IdentifyModel(byte[] image)
         {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
             PJRC_Board board;
 
             const uint startup_size = 0x400;
-            if (image.Count() >= startup_size)
+            if (image.Length >= startup_size)
             {
                 UInt32 reset_handler_addr = BitConverter.ToUInt32(image, 4);
                 if (reset_handler_addr >= startup_size) return PJRC_Board.unknown;
@@ -50,11 +56,11 @@ namespace lunOptics.TeensySharp.Implementation
                         magic_check = 0x00003F82;
                         break;
                     case 0x199:
-                        board = PJRC_Board.Teensy_35;
+                        board = PJRC_Board.Teensy35;
                         magic_check = 0x00043F82;
                         break;
                     case 0x1D1:
-                        board = PJRC_Board.Teensy_36;
+                        board = PJRC_Board.Teensy36;
                         magic_check = 0x00043F82;
                         break;
                     default:
@@ -81,7 +87,7 @@ namespace lunOptics.TeensySharp.Implementation
             {
                 byte RecLen = Convert.ToByte(line.Substring(1, 2), 16);
                 uint DRLO = Convert.ToUInt16(line.Substring(3, 4), 16);  // Data Record Load Offset
-                var RECTYP = (RecordType)Convert.ToByte(line.Substring(7, 2));
+                var RECTYP = (RecordType)Convert.ToByte(line.Substring(7, 2),InvariantCulture);
 
                 if (line.Length == 11 + 2 * RecLen)
                 {

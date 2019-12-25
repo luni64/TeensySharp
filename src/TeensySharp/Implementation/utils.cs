@@ -14,7 +14,7 @@ namespace lunOptics.TeensySharp.Implementation
             {
                 if (ctx != null)
                 {
-                    ctx.Post(s => customEvent.Invoke(null, e), null);
+                    ctx.Post(s => customEvent.Invoke(sender, e), null);
                 }
                 else
                 {

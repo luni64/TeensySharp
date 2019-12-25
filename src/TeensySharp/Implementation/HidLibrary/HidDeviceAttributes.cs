@@ -1,5 +1,6 @@
 ﻿namespace HidLibrary
 {
+#pragma warning disable CA1305 // Specify IFormatProvider
     public class HidDeviceAttributes
     {
         internal HidDeviceAttributes(NativeMethods.HIDD_ATTRIBUTES attributes)
@@ -18,4 +19,5 @@
         public string VendorHexId { get; set; }
         public string ProductHexId { get; set; }
     }
+#pragma warning restore CA1305 // Specify IFormatProvider
 }
