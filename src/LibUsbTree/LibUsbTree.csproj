@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>    
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>lunOptics.LibUsbTree</RootNamespace>
   </PropertyGroup>
- 
-  <ItemGroup>   
-    <Compile Remove="SharpHexParser.cs" />
-    <Compile Remove="SharpUploader.cs" />
-    <Compile Remove="TeensyWatcher.cs" />
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,12 +16,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="morelinq" Version="3.3.1" />
-    <PackageReference Include="SerialPortStream" Version="2.2.0" />
-    <PackageReference Include="System.Management" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\LibUsbTree\LibUsbTree.csproj" />
   </ItemGroup>
 
 </Project>
