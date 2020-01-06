@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using lunOptics.TeensySharp;
+using lunOptics.libTeensySharp;
 using System.Linq;
 using static System.Globalization.CultureInfo;
 
 
-namespace lunOptics.TeensySharp.Implementation
+namespace lunOptics.libTeensySharp.Implementation
 {
     internal class TeensyFirmware : IFirmware
     {
@@ -77,7 +77,7 @@ namespace lunOptics.TeensySharp.Implementation
                 {
                     record.data.CopyTo(Getimage(), record.addr - 0x6000_0000);
                 }
-                boardType = PJRC_Board.Teensy40;
+                boardType = PJRC_Board.T4_0;
             }
             else
             {
@@ -93,7 +93,6 @@ namespace lunOptics.TeensySharp.Implementation
 
         private PJRC_Board IdentifyModel()
         {
-            PJRC_Board board = PJRC_Board.unknown;
             const uint startup_size = 0x400;
             if (Getimage().Length >= startup_size)
             {
@@ -101,26 +100,27 @@ namespace lunOptics.TeensySharp.Implementation
                 if (reset_handler_addr >= startup_size) return PJRC_Board.unknown;
 
                 UInt32 magic_check;
+                PJRC_Board board;
                 switch (reset_handler_addr)
                 {
                     case 0xF9:
-                        board = PJRC_Board.Teensy_30;
+                        board = PJRC_Board.T3_0;
                         magic_check = 0x00043F82;
                         break;
                     case 0x1BD:
-                        board = PJRC_Board.Teensy_31_2;
+                        board = PJRC_Board.T3_2;
                         magic_check = 0x00043F82;
                         break;
                     case 0xC1:
-                        board = PJRC_Board.Teensy_LC;
+                        board = PJRC_Board.T_LC;
                         magic_check = 0x00003F82;
                         break;
                     case 0x199:
-                        board = PJRC_Board.Teensy35;
+                        board = PJRC_Board.T3_5;
                         magic_check = 0x00043F82;
                         break;
                     case 0x1D1:
-                        board = PJRC_Board.Teensy36;
+                        board = PJRC_Board.T3_6;
                         magic_check = 0x00043F82;
                         break;
                     default:

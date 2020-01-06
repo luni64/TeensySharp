@@ -1,5 +1,5 @@
 ﻿using HidLibrary;
-using lunOptics.TeensySharp.Implementation;
+using lunOptics.libTeensySharp.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +8,8 @@ using System.Management;
 using System.Threading;
 using static System.Globalization.CultureInfo;
 
-namespace lunOptics.TeensySharp
+
+namespace lunOptics.libTeensySharp
 {
     public enum ChangeType
     {
@@ -164,21 +165,21 @@ namespace lunOptics.TeensySharp
                 if (serNum != 0xFFFFFFFF) { serNum *= 10; }// diy boards without serial number
 
                 var hidDev = HidDevices.Enumerate((int)vid, (int)halfKayPid).FirstOrDefault(x => GetSerialNumber(x, 16) == serNum);
+               
                 switch (hidDev?.Capabilities.Usage)
                 {
-                    case 0x1A: board = PJRC_Board.unknown; break;
+                    case 0x1A: board = PJRC_Board.unknown;break;
                     case 0x1B: board = PJRC_Board.Teensy_2; break;
                     case 0x1C: board = PJRC_Board.Teensy_2pp; break;
-                    case 0x1D: board = PJRC_Board.Teensy_30; break;
-                    case 0x1E: board = PJRC_Board.Teensy_31_2; break;
-                    case 0x20: board = PJRC_Board.Teensy_LC; break;
-                    case 0x21: board = PJRC_Board.Teensy_31_2; break;
-                    case 0x1F: board = PJRC_Board.Teensy35; break;
-                    case 0x22: board = PJRC_Board.Teensy36; break;
-                    case 0x24: board = PJRC_Board.Teensy40; break;
+                    case 0x1D: board = PJRC_Board.T3_0; break;
+                    case 0x1E: board = PJRC_Board.T3_2; break;
+                    case 0x20: board = PJRC_Board.T_LC; break;
+                    case 0x21: board = PJRC_Board.T3_2; break;
+                    case 0x1F: board = PJRC_Board.T3_5; break;
+                    case 0x22: board = PJRC_Board.T3_6; break;
+                    case 0x24: board =PJRC_Board.T4_0; break;
                     default: board = PJRC_Board.unknown; break;
-                }
-
+                };
                 return new Teensy
                 {
                     UsbType = UsbType.HalfKay,
@@ -194,18 +195,18 @@ namespace lunOptics.TeensySharp
             {
                 uint serNum = Convert.ToUInt32(DeviceIdParts[2], InvariantCulture);  // these devices code the S/N as decimal number
 
-                var hwid = ((string[])mgmtObj["HardwareID"])[0];                
-                switch (hwid.Substring(hwid.IndexOf("REV_",StringComparison.InvariantCultureIgnoreCase) + 4, 4))
-                {
-                    case "0273": board = PJRC_Board.Teensy_LC; break;
-                    case "0274": board = PJRC_Board.Teensy_30; break;
-                    case "0275": board = PJRC_Board.Teensy_31_2; break;
-                    case "0276": board = PJRC_Board.Teensy35; break;
-                    case "0277": board = PJRC_Board.Teensy36; break;
-                    case "0279": board = PJRC_Board.Teensy40; break;
-                    default: board = PJRC_Board.unknown; break;
-                }
+                var hwid = ((string[])mgmtObj["HardwareID"])[0];
 
+                switch(hwid.Substring(hwid.IndexOf("REV_", StringComparison.InvariantCultureIgnoreCase) + 4, 4))
+                {
+                    case "0273": board = PJRC_Board.T_LC; break;
+                    case "0274": board = PJRC_Board.T3_0; break;
+                    case "0275": board = PJRC_Board.T3_2; break;
+                    case "0276": board = PJRC_Board.T3_5; break;
+                    case "0277": board = PJRC_Board.T3_6; break;
+                    case "0279": board = PJRC_Board.T4_0; break;
+                    default: board = PJRC_Board.unknown; break;
+                };
                 UsbType t;
                 UsbSubType st;
 

@@ -1,6 +1,5 @@
 ﻿using HidLibrary;
 using MoreLinq;
-using RJCP.IO.Ports;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 
 
-namespace lunOptics.TeensySharp.Implementation
+namespace lunOptics.libTeensySharp.Implementation
 {
     internal class Teensy : ITeensy
     {
@@ -42,12 +41,12 @@ namespace lunOptics.TeensySharp.Implementation
                 {
                     case PJRC_Board.Teensy_2: return $"Teensy 2 ({Serialnumber})";
                     case PJRC_Board.Teensy_2pp: return $"Teensy 2++ ({Serialnumber})";
-                    case PJRC_Board.Teensy_LC: return $"Teensy LC ({Serialnumber})";
-                    case PJRC_Board.Teensy_30: return $"Teensy 3.0 ({Serialnumber})";
-                    case PJRC_Board.Teensy_31_2: return $"Teensy 3.2 ({Serialnumber})";
-                    case PJRC_Board.Teensy35: return $"Teensy 3.5 ({Serialnumber})";
-                    case PJRC_Board.Teensy36: return $"Teensy 3.6 ({Serialnumber})";
-                    case PJRC_Board.Teensy40: return $"Teensy 4.0 ({Serialnumber})";
+                    case PJRC_Board.T_LC: return $"Teensy LC ({Serialnumber})";
+                    case PJRC_Board.T3_0: return $"Teensy 3.0 ({Serialnumber})";
+                    case PJRC_Board.T3_2: return $"Teensy 3.2 ({Serialnumber})";
+                    case PJRC_Board.T3_5: return $"Teensy 3.5 ({Serialnumber})";
+                    case PJRC_Board.T3_6: return $"Teensy 3.6 ({Serialnumber})";
+                    case PJRC_Board.T4_0: return $"Teensy 4.0 ({Serialnumber})";
                     case PJRC_Board.unknown: return $"Unknown Board ({Serialnumber})";
                     default: return null;
                 }
@@ -62,11 +61,11 @@ namespace lunOptics.TeensySharp.Implementation
                     return true;
 
                 case UsbType.Serial:
-                    using (ISerialPortStream port = new SerialPortStream(this.Port))
-                    {
-                        port.Open();
-                        port.BaudRate = 134; //This will switch the board to HalfKay. Don't try to access port after this...                   
-                    }
+                    //using (ISerialPortStream port = new SerialPortStream(this.Port))
+                    //{
+                    //    port.Open();
+                    //    port.BaudRate = 134; //This will switch the board to HalfKay. Don't try to access port after this...                   
+                    //}
                     break;
 
                 case UsbType.HID:
@@ -174,11 +173,7 @@ namespace lunOptics.TeensySharp.Implementation
 
         protected void OnPropertyChanged([CallerMemberName] string name = "")
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         #endregion
@@ -189,8 +184,10 @@ namespace lunOptics.TeensySharp.Implementation
 
         private static HidReport PrepareReport(uint addr, byte[] data, BoardDefinition BoardDef)
         {
-            var report = new HidReport((int)(BoardDef.BlockSize + BoardDef.DataOffset + 1));
-            report.ReportId = 0;
+            var report = new HidReport((int)(BoardDef.BlockSize + BoardDef.DataOffset + 1))
+            {
+                ReportId = 0
+            };
 
             // Copy address bytes into report. Use function stored in board definition
             BoardDef.AddrCopy(report.Data, BitConverter.GetBytes(addr));
@@ -203,7 +200,7 @@ namespace lunOptics.TeensySharp.Implementation
 
         private static Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
         {
-            { PJRC_Board.Teensy40, new BoardDefinition
+            { PJRC_Board.T4_0, new BoardDefinition
             {
                 MCU =       "IMXRT1062",
                 FlashSize = 2048 * 1024,
@@ -212,7 +209,7 @@ namespace lunOptics.TeensySharp.Implementation
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            { PJRC_Board.Teensy36, new BoardDefinition
+            { PJRC_Board.T3_6, new BoardDefinition
             {
                 MCU =       "MK66FX1M0",
                 FlashSize = 1024 * 1024,
@@ -221,7 +218,7 @@ namespace lunOptics.TeensySharp.Implementation
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            { PJRC_Board.Teensy35, new BoardDefinition
+            { PJRC_Board.T3_5, new BoardDefinition
             {
                 MCU=       "MK64FX512",
                 FlashSize = 512 * 1024,
@@ -230,7 +227,7 @@ namespace lunOptics.TeensySharp.Implementation
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            {PJRC_Board.Teensy_31_2, new BoardDefinition
+            {PJRC_Board.T3_2, new BoardDefinition
             {
                 MCU=       "MK20DX256",
                 FlashSize = 256 * 1024,
@@ -239,7 +236,7 @@ namespace lunOptics.TeensySharp.Implementation
                 AddrCopy = (rep,addr) => {rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            {PJRC_Board.Teensy_30, new BoardDefinition
+            {PJRC_Board.T3_0, new BoardDefinition
             {
                 MCU=       "MK20DX128",
                 FlashSize = 128 * 1024,
@@ -248,7 +245,7 @@ namespace lunOptics.TeensySharp.Implementation
                 AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1]; rep[2]=addr[2];}
             }},
 
-            {PJRC_Board.Teensy_LC, new BoardDefinition
+            {PJRC_Board.T_LC, new BoardDefinition
             {
                 MCU =      "MK126Z64",
                 FlashSize = 62 * 1024,

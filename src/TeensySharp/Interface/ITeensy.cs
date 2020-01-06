@@ -2,16 +2,16 @@
 using System;
 using System.ComponentModel;
 
-namespace lunOptics.TeensySharp
+namespace lunOptics.libTeensySharp
 {
     public enum PJRC_Board
     {
-        Teensy40,
-        Teensy36,
-        Teensy35,
-        Teensy_31_2,
-        Teensy_30,
-        Teensy_LC,
+        T4_0,
+        T3_6,
+        T3_5,
+        T3_2,
+        T3_0,
+        T_LC,
         Teensy_2pp,
         Teensy_2,       
         unknown,
@@ -39,9 +39,10 @@ namespace lunOptics.TeensySharp
     {
         disconnected,
         HalfKay,
-        HID,        
+        HID,
         Serial,
         unknown,
+        Hub,
     }
 
     public interface ITeensy: INotifyPropertyChanged

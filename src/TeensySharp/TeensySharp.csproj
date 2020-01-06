@@ -1,10 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>    
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net46</TargetFrameworks>
+    <RootNamespace>libTeensySharp</RootNamespace>    
   </PropertyGroup>
  
   <ItemGroup>   
+    <Compile Remove="Implementation\Teensy\TeensyTree.cs" />   
+    <Compile Remove="Implementation\Teensy\UsbTypes.cs" />   
     <Compile Remove="SharpHexParser.cs" />
     <Compile Remove="SharpUploader.cs" />
     <Compile Remove="TeensyWatcher.cs" />
@@ -17,12 +20,21 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="morelinq" Version="3.3.1" />
-    <PackageReference Include="SerialPortStream" Version="2.2.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.IO.Ports" Version="4.7.0" />    
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="System.IO.Ports">
+      <Version>4.7.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\LibUsbTree\LibUsbTree.csproj" />
+    <ProjectReference Include="..\..\..\LibUsbTree\src\LibUsbTree.csproj" />
   </ItemGroup>
 
 </Project>

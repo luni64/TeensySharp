@@ -1,19 +1,23 @@
-﻿using lunOptics.LibUsbTree;
+﻿using lunOptics.libUsbTree;
 using System;
+using System.Threading;
+using static lunOptics.libTeensySharp.UsbTeensy;
 
-namespace lunOptics.TeensyTree.Implementation
+namespace lunOptics.libTeensySharp
 {
     public class TeensyTree : UsbTree
     {
-        protected override UsbDevice MakeDevice(UsbDeviceInfo instance)
-        {
-            if (instance == null) throw new ArgumentNullException(nameof(instance));
+        public TeensyTree(SynchronizationContext ctx) : base(ctx) { }
 
-            if (instance.vid == 0x16c0)
+        public override UsbDevice MakeDevice(UsbDeviceInfo2 deviceInfo)
+        {
+            if (deviceInfo == null) throw new ArgumentNullException(nameof(deviceInfo));
+
+            if (deviceInfo.vid == PjrcVid && deviceInfo.pid >= PjrcMinPid && deviceInfo.pid <= PjRcMaxPid)
             {
-                return new UsbTeensy(instance);
+                return new UsbTeensy(deviceInfo);
             }
-            return base.MakeDevice(instance);
+            return base.MakeDevice(deviceInfo);
         }
     }
 }

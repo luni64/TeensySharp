@@ -18,12 +18,6 @@
     <ProjectReference Include="..\..\TeensySharp\TeensySharp.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="LibUsbTree">
-      <HintPath>..\..\..\..\LibUsbTree\LibUsbTree\bin\Release\netstandard2.0\LibUsbTree.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
   
 
 </Project>

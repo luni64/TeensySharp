@@ -2,7 +2,7 @@
 
 namespace HidLibrary
 {
-    public static class Extensions
+    public static class Extensionss
     {
         public static string ToUTF8String(this byte[] buffer)
         {

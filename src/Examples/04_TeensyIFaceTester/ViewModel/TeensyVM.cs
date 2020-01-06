@@ -1,4 +1,4 @@
-﻿using lunOptics.TeensySharp;
+﻿using lunOptics.libTeensySharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,11 +21,11 @@ namespace ViewModel
             {
                 return Model.BoardType switch
                 {
-                    PJRC_Board.Teensy_LC => "LC",
-                    PJRC_Board.Teensy_31_2 => "T3.2",
-                    PJRC_Board.Teensy35 => "T3.5",
-                    PJRC_Board.Teensy36 => "T3.6",
-                    PJRC_Board.Teensy40 => "T4.0",
+                    PJRC_Board.T_LC => "LC",
+                    PJRC_Board.T3_2 => "T3.2",
+                    PJRC_Board.T3_5 => "T3.5",
+                    PJRC_Board.T3_6 => "T3.6",
+                    PJRC_Board.T4_0 => "T4.0",
                     _ => "?",
                 };
             }
@@ -41,7 +41,7 @@ namespace ViewModel
                 {
                     s += $" ({Model.UsbSubType.ToString()})";
                 }
-                if(Model.UsbType == lunOptics.TeensySharp.UsbType.Serial)
+                if(Model.UsbType == lunOptics.libTeensySharp.UsbType.Serial)
                 {
                     s += $" on {Model.Port}";
                 }
@@ -50,7 +50,7 @@ namespace ViewModel
             }
         }
 
-        public bool isNotHalfKay => Model.UsbType != lunOptics.TeensySharp.UsbType.HalfKay;
+        public bool isNotHalfKay => Model.UsbType != lunOptics.libTeensySharp.UsbType.HalfKay;
 
         public ITeensy Model { get => model; set => model = value; }
 

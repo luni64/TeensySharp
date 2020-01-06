@@ -2,12 +2,12 @@
 using MoreLinq;
 using System;
 using System.Collections.Generic;
-using RJCP.IO.Ports;
+
 using System.Linq;
 using System.Threading;
-using lunOptics.TeensySharp;
+using lunOptics.libTeensySharp;
 
-namespace lunOptics
+namespace lunOptics.libTeensySharp.Implementation
 {
     /// <summary>
     /// This class handles uploading of firmware images to the PJRC Teensy boards. 
