@@ -9,7 +9,7 @@ using libTeensySharp.Implementation.Teensy;
 
 namespace ViewModel
 {
-    public sealed class MainVM :IDisposable
+    public sealed class MainVM : IDisposable
     {
         //public ReadOnlyObservableCollection<UsbDevice> devices { get; }
         public ReadOnlyObservableCollection<UsbDevice> roots { get; }
@@ -21,9 +21,10 @@ namespace ViewModel
             tree = new UsbTree(SynchronizationContext.Current, factory);
             roots = new ReadOnlyObservableCollection<UsbDevice>(tree.DeviceTree.children);
             list = new ReadOnlyObservableCollection<UsbDevice>(tree.DeviceList);
-                      
-            cmdReboot = new RelayCommand(doReboot);                     
-           
+
+            cmdReboot = new RelayCommand(doReboot);
+            cmdReset = new RelayCommand(doReset);
+
         }
 
         public UsbTeensy foundTeensy { get; }
@@ -36,21 +37,30 @@ namespace ViewModel
         {
             tree.Dispose();
         }
-
-
-        public RelayCommand cmdReboot { get; }
         
-        void doReboot(object o)
+        public RelayCommand cmdReboot { get; }
+
+        async void doReboot(object o)
         {
-           
+            var teensy = list.OfType<UsbTeensy>().FirstOrDefault();
+            if (teensy != null)
+            {
+                Debug.WriteLine(teensy?.Description);
+                bool result = await teensy.RebootAsync();
+                Debug.WriteLine("Reboot " + (result ? "OK" : "ERROR"));
+            }
+        }
 
-            //var teensy = factory.repo.OfType<UsbTeensy>();
-            //if(teensy != null)
-            //{
-            //    Debug.WriteLine(teensy?.Description);
-            //    teensy.Reboot();
-            //}
-
+        public RelayCommand cmdReset { get; }
+        async void doReset(object o)
+        {
+            var teensy = list.OfType<UsbTeensy>().FirstOrDefault();
+            if (teensy != null)
+            {
+                Debug.WriteLine(teensy?.Description);
+                bool result = await teensy.ResetAsync();
+                Debug.WriteLine("Reset" + (result ? "OK" : "ERROR"));
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ namespace lunOptics.libTeensySharp
         HID,
         Serial,
         unknown,
-        Hub,
+        COMPOSITE,
     }
 
     public interface ITeensy: INotifyPropertyChanged

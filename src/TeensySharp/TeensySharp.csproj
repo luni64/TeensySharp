@@ -8,6 +8,7 @@
   <ItemGroup>   
     <Compile Remove="Implementation\Teensy\TeensyTree.cs" />   
     <Compile Remove="Implementation\Teensy\UsbTypes.cs" />   
+    <Compile Remove="Native\HidHelper.cs" />   
     <Compile Remove="SharpHexParser.cs" />
     <Compile Remove="SharpUploader.cs" />
     <Compile Remove="TeensyWatcher.cs" />
