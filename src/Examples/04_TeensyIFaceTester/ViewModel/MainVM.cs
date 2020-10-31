@@ -1,4 +1,4 @@
-﻿using libTeensySharp.Implementation.Teensy;
+﻿using libTeensySharp.Implementation;
 using lunOptics.libTeensySharp;
 using lunOptics.libUsbTree;
 using System;

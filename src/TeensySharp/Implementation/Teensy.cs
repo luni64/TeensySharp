@@ -1,6 +1,5 @@
-﻿using BetterWin32Errors;
-using lunOptics.libTeensySharp.Implementation;
-using lunOptics.libUsbTree;
+﻿using lunOptics.libUsbTree;
+using lunOptics.libUsbTree.Implementation;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -11,9 +10,9 @@ using System.Threading.Tasks;
 
 using static lunOptics.libTeensySharp.Native.NativeWrapper;
 
-namespace lunOptics.libTeensySharp
+namespace lunOptics.libTeensySharp.Implementation
 {
-    public class Teensy : UsbDevice
+    internal class Teensy : UsbDevice, ITeensy
     {
         public Teensy(InfoNode info) : base(info)
         {
@@ -30,16 +29,17 @@ namespace lunOptics.libTeensySharp
         {
             TimeSpan timeOut = timeout ?? TimeSpan.FromSeconds(6.5);
 
-            var result = await RebootAsync(timeout); // try to reboot teensy
+            var result = await RebootAsync(timeOut); // try to reboot teensy
             if (result != ErrorCode.OK) return result;
 
             using (var hidHandle = getFileHandle(interfaces[0].DeviceInstanceID))
             {
                 if (hidHandle == null || hidHandle.IsInvalid) return ErrorCode.HidComError;
 
-                var boardDef = BoardDefinitions[BoardType];
+                var boardDef = BoardDefinitions[BoardType];                
+                var reportSize = boardDef.BlockSize + boardDef.DataOffset + 1;
 
-                var report = new byte[boardDef.BlockSize + boardDef.DataOffset + 1];
+                var report = new byte[reportSize];
                 report[0] = 0x00;
                 report[1] = 0xFF;
                 report[2] = 0xFF;
@@ -84,7 +84,7 @@ namespace lunOptics.libTeensySharp
                 }
                 return (UsbType == UsbType.HalfKay) ? ErrorCode.OK : ErrorCode.RebootError;
             }
-            catch (Win32Exception)
+            catch 
             {
                 return ErrorCode.Unexpected;
             }
@@ -143,15 +143,15 @@ namespace lunOptics.libTeensySharp
             }
             return result;
         }
-        public ErrorCode Reboot()
+        public ErrorCode Reboot(TimeSpan? timeout = null)
         {
-            var task = RebootAsync();
+            var task = RebootAsync(timeout);
             task.Wait();
             return task.Result;
         }
-        public ErrorCode Reset()
+        public ErrorCode Reset(TimeSpan? timeout = null)
         {
-            var task = ResetAsync();
+            var task = ResetAsync(timeout);
             task.Wait();
             return task.Result;
         }
@@ -179,7 +179,7 @@ namespace lunOptics.libTeensySharp
         internal static bool IsTeensy(InfoNode info)
         {
             return info?.vid == PjrcVid && info.pid >= Teensy.PjrcMinPid && info.pid <= Teensy.PjRcMaxPid;
-        }
+        } 
         protected static int getSerialnumber(InfoNode info)
         {
             return info?.pid == HalfKayPid ? Convert.ToInt32(info.serNumStr, 16) * 10 : Convert.ToInt32(info.serNumStr, 10);
@@ -191,7 +191,7 @@ namespace lunOptics.libTeensySharp
         protected static int PjRcMaxPid => 0x500;
         protected static uint SerEmuUsageID => 0xFFC9_0004;
         protected static uint RawHidUsageID => 0xFFAB_0200;
-        private void doUpdate(InfoNode info)
+        protected void doUpdate(InfoNode info)
         {
             base.update(info);
 
@@ -277,9 +277,9 @@ namespace lunOptics.libTeensySharp
             OnPropertyChanged("");  // update all properties
         }
 
-      //  private string Port { get; set; }
+        //  private string Port { get; set; }
 
-        private static void rebootSerial(string portName)
+        protected static void rebootSerial(string portName)
         {
             using (var p = new SerialPort(portName))
             {
@@ -288,7 +288,7 @@ namespace lunOptics.libTeensySharp
             }
         }
 
-        private static bool rebootSerEmu(UsbDevice iface)
+        protected static bool rebootSerEmu(IUsbDevice iface)
         {
             var hidHandle = getFileHandle(iface.DeviceInstanceID);
             if (hidHandle?.IsInvalid ?? true)
@@ -302,16 +302,14 @@ namespace lunOptics.libTeensySharp
             return result;
         }
 
-        private class BoardDefinition
+        protected class BoardDefinition
         {
             public uint FlashSize;
             public uint BlockSize;
             public uint DataOffset;
-            public string MCU;
-            public Action<byte[], byte[]> AddrCopy;
+            public string MCU;         
         }
-
-        private static Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
+        protected static readonly Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
         {
             { PJRC_Board.T4_1, new BoardDefinition
             {

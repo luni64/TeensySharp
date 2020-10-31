@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using lunOptics.libTeensySharp;
 using System.Linq;
 using static System.Globalization.CultureInfo;
 
@@ -34,16 +32,14 @@ namespace lunOptics.libTeensySharp.Implementation
 
         public byte[] Getimage()
         {
-            return image1;
+            return image;
         }
-
-
-
-        private byte[] image1 = null;
+               
+        private byte[] image = null;
 
         private void Setimage(byte[] value)
         {
-            image1 = value;
+            image = value;
         }
 
         public PJRC_Board boardType { get; private set; } = PJRC_Board.unknown;
