@@ -4,6 +4,12 @@
     <TargetFrameworks>netstandard2.1;netstandard2.0;net46</TargetFrameworks>
     <RootNamespace>libTeensySharp</RootNamespace>    
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Implementation\HidLibrary\**" />
+    <EmbeddedResource Remove="Implementation\HidLibrary\**" />
+    <None Remove="Implementation\HidLibrary\**" />
+  </ItemGroup>
  
   <ItemGroup>   
     <Compile Remove="Implementation\Teensy\TeensyTree.cs" />   
@@ -36,6 +42,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\LibUsbTree\src\LibUsbTree.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Implementation\Teensy\" />
   </ItemGroup>
 
 </Project>

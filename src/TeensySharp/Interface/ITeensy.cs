@@ -1,5 +1,4 @@
-﻿using HidLibrary;
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace lunOptics.libTeensySharp

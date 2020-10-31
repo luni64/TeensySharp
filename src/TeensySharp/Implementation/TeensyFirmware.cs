@@ -31,16 +31,16 @@ namespace lunOptics.libTeensySharp.Implementation
 
 
         #region IFirmware implementation -----------------------------------------------
-      
+
         public byte[] Getimage()
         {
             return image1;
         }
-      
+
 
 
         private byte[] image1 = null;
-      
+
         private void Setimage(byte[] value)
         {
             image1 = value;
@@ -150,7 +150,7 @@ namespace lunOptics.libTeensySharp.Implementation
             {
                 byte RecLen = Convert.ToByte(line.Substring(1, 2), 16);
                 int DRLO = Convert.ToUInt16(line.Substring(3, 4), 16);  // Data Record Load Offset
-                record.type = (RecordType)Convert.ToByte(line.Substring(7, 2),InvariantCulture);
+                record.type = (RecordType)Convert.ToByte(line.Substring(7, 2), InvariantCulture);
 
                 if (line.Length == 11 + 2 * RecLen)
                 {

@@ -23,13 +23,10 @@ namespace lunOptics.libTeensySharp
 
         public int Serialnumber { get; private set; } = 0;
         public UsbType UsbType { get; private set; }
-        public string Port { get; private set; }
+    
+        public List<string> Ports { get; } = new List<string>();
         public PJRC_Board BoardType { get; private set; }
 
-        public override void update(InfoNode info)
-        {
-            doUpdate(info);
-        }
 
         public async Task<ErrorCode> ResetAsync(TimeSpan? timeout = null)
         {
@@ -59,14 +56,14 @@ namespace lunOptics.libTeensySharp
             try
             {
                 if (UsbType == UsbType.HalfKay) return await Task.FromResult(ErrorCode.OK); // already rebooted  
-                if (UsbType == UsbType.Serial) rebootSerial(Port);                          // simple serial device, can be rebooted directly
+                if (UsbType == UsbType.Serial) rebootSerial(Ports[0]);                          // simple serial device, can be rebooted directly
                 else                                                                        // composite device, check for a rebootable function
                 {
                     foreach (UsbTeensy usbFunction in functions)
                     {
                         if (usbFunction.UsbType == UsbType.Serial)                          // serial   
                         {
-                            rebootSerial(usbFunction.Port);
+                            rebootSerial(usbFunction.Ports[0]);
                             break;
                         }
                         else                                                                // check for seremu
@@ -94,15 +91,14 @@ namespace lunOptics.libTeensySharp
                 return ErrorCode.Unexpected;
             }
         }
-        public async Task<ErrorCode> UploadAsync(string firmware, bool reboot = true, TimeSpan? timeout = null)
+        public async Task<ErrorCode> UploadAsync(string hexFile, bool reboot = true, TimeSpan? timeout = null)
         {
             TimeSpan timeOut = timeout ?? TimeSpan.FromSeconds(6.5);
-            IFirmware FW = new TeensyFirmware(firmware);
+            IFirmware firmware = new TeensyFirmware(hexFile);
 
             var boardType = (BoardType == PJRC_Board.T4_1) ? PJRC_Board.T4_0 : BoardType;
-            if (FW.boardType != boardType) return ErrorCode.Upload_FirmwareMismatch;
+            if (firmware.boardType != boardType) return ErrorCode.Upload_FirmwareMismatch;
 
-            //ErrorCode result = await TTeensy.UploadFirmware(this, FW, timeOut);
 
             var result = await RebootAsync(timeout);    // try to start the bootloader
             if (result != ErrorCode.OK) return result;
@@ -119,7 +115,7 @@ namespace lunOptics.libTeensySharp
                 else
                 {
                     uint addr = 0;
-                    foreach (byte[] dataBlock in FW.Getimage().Batch((int)boardDef.BlockSize).ToArray())   //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
+                    foreach (byte[] dataBlock in firmware.Getimage().Batch((int)boardDef.BlockSize).ToArray())   //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
                     {
                         if (addr == 0 || !dataBlock.All(d => d == 0xFF))        //skip empty blocks but always write first block to erase chip
                         {
@@ -142,7 +138,7 @@ namespace lunOptics.libTeensySharp
                     }
                 }
             }
-            
+
             if (result == ErrorCode.OK && reboot)
             {
                 result = await ResetAsync(timeOut);
@@ -161,6 +157,12 @@ namespace lunOptics.libTeensySharp
             task.Wait();
             return task.Result;
         }
+        public ErrorCode Upload(string hexFile, bool reboot = true, TimeSpan? timeout = null)
+        {
+            var task = UploadAsync(hexFile, reboot, timeout);
+            task.Wait();
+            return task.Result;
+        }
 
         public override bool isEqual(InfoNode otherDevice)
         {
@@ -172,23 +174,25 @@ namespace lunOptics.libTeensySharp
             }
             return false;
         }
-
-        public static bool IsTeensy(InfoNode info)
+        public override void update(InfoNode info)
+        {
+            doUpdate(info);
+        }
+        internal static bool IsTeensy(InfoNode info)
         {
             return info?.vid == PjrcVid && info.pid >= UsbTeensy.PjrcMinPid && info.pid <= UsbTeensy.PjRcMaxPid;
         }
-
-        public static int getSerialnumber(InfoNode info)
+        protected static int getSerialnumber(InfoNode info)
         {
             return info?.pid == HalfKayPid ? Convert.ToInt32(info.serNumStr, 16) * 10 : Convert.ToInt32(info.serNumStr, 10);
         }
 
-        public static int HalfKayPid => 0x478;
-        public static int PjrcVid => 0x16C0;
-        public static int PjrcMinPid => 0;
-        public static int PjRcMaxPid => 0x500;
-        public static uint SerEmuUsageID => 0xFFC9_0004;
-        public static uint RawHidUsageID => 0xFFAB_0200;
+        protected static int HalfKayPid => 0x478;
+        protected static int PjrcVid => 0x16C0;
+        protected static int PjrcMinPid => 0;
+        protected static int PjRcMaxPid => 0x500;
+        protected static uint SerEmuUsageID => 0xFFC9_0004;
+        protected static uint RawHidUsageID => 0xFFAB_0200;
         private void doUpdate(InfoNode info)
         {
             base.update(info);
@@ -199,7 +203,9 @@ namespace lunOptics.libTeensySharp
             {
                 UsbType = UsbType.Serial;
                 Match mPort = Regex.Match(Description, @".*\(([^)]+)\)", RegexOptions.IgnoreCase);
-                if (mPort.Success) Port = mPort.Groups[1].Value;
+                if (mPort.Success) Ports.Add(mPort.Groups[1].Value);
+
+
             }
             else UsbType = UsbType.unknown;
 
@@ -250,7 +256,7 @@ namespace lunOptics.libTeensySharp
 
                 switch (UsbType)
                 {
-                    case UsbType.Serial: Description = prefix + $"({Port})"; break;
+                    case UsbType.Serial: Description = prefix + $"({Ports[0]})"; break;
                     case UsbType.HID: Description = prefix + "(HID)"; break;
                     case UsbType.HalfKay: Description = prefix + "(Bootloader)"; break;
                     case UsbType.COMPOSITE: Description = prefix + "(Composite)"; break;
@@ -258,11 +264,25 @@ namespace lunOptics.libTeensySharp
             }
             else //Interface
             {
-                Description = $"({Mi}) - {ClassDescription} " + (UsbType == UsbType.Serial ? $"({Port})" : "");
+                Description = $"({Mi}) - {ClassDescription} " + (UsbType == UsbType.Serial ? $"({Ports[0]})" : "");
             }
+            //if (UsbType == UsbType.Serial)
+            //{
+            //    Ports.Add(Port);
+            //}
+            if(UsbType == UsbType.COMPOSITE)
+            {
+                Ports.Clear();
+                foreach (UsbTeensy function in functions.OfType<UsbTeensy>().Where(f => f.UsbType == UsbType.Serial))
+                {
+                    Ports.Add(function.Ports[0]);
+                }
+            }
+
             OnPropertyChanged("");  // update all properties
         }
 
+      //  private string Port { get; set; }
 
         private static void rebootSerial(string portName)
         {

@@ -1,12 +1,12 @@
-﻿using lunOptics.libTeensySharp;
+﻿using libTeensySharp.Implementation.Teensy;
+using lunOptics.libTeensySharp;
 using lunOptics.libUsbTree;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Linq;
-using libTeensySharp.Implementation.Teensy;
-using HidLibrary;
+using System.Threading;
+
 
 namespace ViewModel
 {
