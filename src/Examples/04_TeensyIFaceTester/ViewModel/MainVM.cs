@@ -28,7 +28,7 @@ namespace ViewModel
             cmdUpload = new RelayCommand(doUpload);
         }
 
-        public UsbTeensy foundTeensy { get; }
+        public Teensy foundTeensy { get; }
 
         private TeensyFactory factory;
 
@@ -42,7 +42,7 @@ namespace ViewModel
         public RelayCommand cmdUpload { get; }
         async void doUpload(object o)
         {
-            var teensy = list.OfType<UsbTeensy>().FirstOrDefault();
+            var teensy = list.OfType<Teensy>().FirstOrDefault();
             if (teensy != null)
             {
                 Debug.WriteLine("Uploading to " +teensy?.Description);
@@ -55,7 +55,7 @@ namespace ViewModel
 
         async void doReboot(object o)
         {
-            var teensy = list.OfType<UsbTeensy>().FirstOrDefault();
+            var teensy = list.OfType<Teensy>().FirstOrDefault();
             if (teensy != null)
             {
                 Debug.WriteLine("Rebooting " + teensy?.Description);
@@ -67,7 +67,7 @@ namespace ViewModel
         public RelayCommand cmdReset { get; }
         async void doReset(object o)
         {
-            var teensy = list.OfType<UsbTeensy>().FirstOrDefault();
+            var teensy = list.OfType<Teensy>().FirstOrDefault();
             if (teensy != null)
             {
                 Debug.WriteLine("Resetting " + teensy?.Description);

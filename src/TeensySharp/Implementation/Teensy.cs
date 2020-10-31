@@ -1,5 +1,4 @@
 ﻿using BetterWin32Errors;
-using libTeensySharp.Implementation;
 using lunOptics.libTeensySharp.Implementation;
 using lunOptics.libUsbTree;
 using MoreLinq;
@@ -14,9 +13,9 @@ using static lunOptics.libTeensySharp.Native.NativeWrapper;
 
 namespace lunOptics.libTeensySharp
 {
-    public class UsbTeensy : UsbDevice
+    public class Teensy : UsbDevice
     {
-        public UsbTeensy(InfoNode info) : base(info)
+        public Teensy(InfoNode info) : base(info)
         {
             doUpdate(info);
         }
@@ -26,8 +25,7 @@ namespace lunOptics.libTeensySharp
     
         public List<string> Ports { get; } = new List<string>();
         public PJRC_Board BoardType { get; private set; }
-
-
+        
         public async Task<ErrorCode> ResetAsync(TimeSpan? timeout = null)
         {
             TimeSpan timeOut = timeout ?? TimeSpan.FromSeconds(6.5);
@@ -56,10 +54,10 @@ namespace lunOptics.libTeensySharp
             try
             {
                 if (UsbType == UsbType.HalfKay) return await Task.FromResult(ErrorCode.OK); // already rebooted  
-                if (UsbType == UsbType.Serial) rebootSerial(Ports[0]);                          // simple serial device, can be rebooted directly
+                if (UsbType == UsbType.Serial) rebootSerial(Ports[0]);                      // simple serial device, can be rebooted directly
                 else                                                                        // composite device, check for a rebootable function
                 {
-                    foreach (UsbTeensy usbFunction in functions)
+                    foreach (Teensy usbFunction in functions)
                     {
                         if (usbFunction.UsbType == UsbType.Serial)                          // serial   
                         {
@@ -68,7 +66,7 @@ namespace lunOptics.libTeensySharp
                         }
                         else                                                                // check for seremu
                         {
-                            var iface = usbFunction.interfaces.FirstOrDefault(i => i.HidUsageID == UsbTeensy.SerEmuUsageID);
+                            var iface = usbFunction.interfaces.FirstOrDefault(i => i.HidUsageID == Teensy.SerEmuUsageID);
                             if (iface != null)
                             {
                                 rebootSerEmu(iface);
@@ -166,11 +164,11 @@ namespace lunOptics.libTeensySharp
 
         public override bool isEqual(InfoNode otherDevice)
         {
-            if (UsbTeensy.IsTeensy(otherDevice))
+            if (Teensy.IsTeensy(otherDevice))
             {
                 return (otherDevice.isInterface || otherDevice.isUsbFunction)
                     ? otherDevice.serNumStr == SnString
-                    : UsbTeensy.getSerialnumber(otherDevice) == Serialnumber;
+                    : Teensy.getSerialnumber(otherDevice) == Serialnumber;
             }
             return false;
         }
@@ -180,7 +178,7 @@ namespace lunOptics.libTeensySharp
         }
         internal static bool IsTeensy(InfoNode info)
         {
-            return info?.vid == PjrcVid && info.pid >= UsbTeensy.PjrcMinPid && info.pid <= UsbTeensy.PjRcMaxPid;
+            return info?.vid == PjrcVid && info.pid >= Teensy.PjrcMinPid && info.pid <= Teensy.PjRcMaxPid;
         }
         protected static int getSerialnumber(InfoNode info)
         {
@@ -218,7 +216,7 @@ namespace lunOptics.libTeensySharp
                     UsbType = UsbType.HalfKay;
                     if (interfaces.Count > 0)
                     {
-                        var iface = interfaces[0] as UsbTeensy;
+                        var iface = interfaces[0] as Teensy;
                         switch (iface.HidUsageID)
                         {
                             case 0xFF9C_001B: BoardType = PJRC_Board.Teensy_2; break;
@@ -266,14 +264,11 @@ namespace lunOptics.libTeensySharp
             {
                 Description = $"({Mi}) - {ClassDescription} " + (UsbType == UsbType.Serial ? $"({Ports[0]})" : "");
             }
-            //if (UsbType == UsbType.Serial)
-            //{
-            //    Ports.Add(Port);
-            //}
+          
             if(UsbType == UsbType.COMPOSITE)
             {
                 Ports.Clear();
-                foreach (UsbTeensy function in functions.OfType<UsbTeensy>().Where(f => f.UsbType == UsbType.Serial))
+                foreach (Teensy function in functions.OfType<Teensy>().Where(f => f.UsbType == UsbType.Serial))
                 {
                     Ports.Add(function.Ports[0]);
                 }

@@ -7,7 +7,7 @@ namespace libTeensySharp.Implementation.Teensy
     {
         public override UsbDevice newDevice(InfoNode info)
         {
-            return UsbTeensy.IsTeensy(info) ? new UsbTeensy(info) : new UsbDevice(info);
+            return lunOptics.libTeensySharp.Teensy.IsTeensy(info) ? new lunOptics.libTeensySharp.Teensy(info) : new UsbDevice(info);
         }
     }
 }
