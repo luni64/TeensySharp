@@ -22,7 +22,7 @@ namespace lunOptics.libTeensySharp.Native
         public static SafeFileHandle getFileHandle(string deviceInstanceId)
         {
             string[] interfaces = cmGetDeviceInterfaces(deviceInstanceId, GUID_DEVINTERFACE.GUID_DEVINTERFACE_HID);
-             if (interfaces.Length > 0)
+            if (interfaces.Length > 0)
             {
                 return CreateFile(interfaces[0], EFileAccess.FILE_GENERIC_WRITE | EFileAccess.FILE_GENERIC_READ, EFileShare.None, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.Device, IntPtr.Zero);
             }
@@ -43,10 +43,13 @@ namespace lunOptics.libTeensySharp.Native
         public static bool hidWriteFeature(SafeFileHandle h, byte[] report)
         {
             if (report == null) throw new ArgumentNullException(nameof(report));
-
             return HidD_SetFeature(h, report, report.Length);
         }
-
+        public static bool hidWriteReport(SafeFileHandle h, byte[] report)
+        {
+            if (report == null) throw new ArgumentNullException(nameof(report));
+            return HidD_SetOutputReport(h, report, report.Length);                        
+        }
 
 
     }

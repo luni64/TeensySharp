@@ -4,8 +4,21 @@ using System.ComponentModel;
 
 namespace lunOptics.libTeensySharp
 {
+    public enum ErrorCode
+    {
+        OK,
+        Upload_FirmwareMismatch,
+        RebootError,
+        ResetError,
+        HidComError,
+        Upload_Timeout,
+        Unexpected,
+
+    }
+
     public enum PJRC_Board
     {
+        T4_1,
         T4_0,
         T3_6,
         T3_5,

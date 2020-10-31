@@ -67,6 +67,7 @@
             <TextBlock Text="{Binding foundTeensy.Description}" VerticalAlignment="Center" />
             <Button Command="{Binding cmdReboot}"  Content="reboot" VerticalAlignment="Center"  Margin="10,0,0,0"/>
             <Button Command="{Binding cmdReset}" Content="Reset" VerticalAlignment="Center"  Margin="10,0,0,0"/>
+            <Button Command="{Binding cmdUpload}" Content="Upload" VerticalAlignment="Center"  Margin="10,0,0,0"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -272,7 +272,7 @@ namespace lunOptics.libTeensySharp.Implementation
                 AddrCopy = (rep,addr)=>{rep[0]=addr[0]; rep[1]=addr[1];}
             }}
         };
-               
+
 
         private class BoardDefinition
         {

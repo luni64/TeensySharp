@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO.Ports;
 using System.Linq;
-using lunOptics.TeensySharp;
+
 
 namespace TeensyWatcherConsole
 {

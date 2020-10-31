@@ -18,6 +18,18 @@
     <ProjectReference Include="..\..\TeensySharp\TeensySharp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="portable.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="portable32.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="portable41.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   
 
 </Project>

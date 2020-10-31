@@ -28,18 +28,19 @@ namespace lunOptics.libTeensySharp.Implementation
         }
 
         #endregion
-        #region IFirmware implementation -----------------------------------------------
-        private byte[] image1 = null;
-        #endregion
+
 
         #region IFirmware implementation -----------------------------------------------
+      
         public byte[] Getimage()
         {
             return image1;
         }
-        #endregion
+      
 
-        #region IFirmware implementation -----------------------------------------------
+
+        private byte[] image1 = null;
+      
         private void Setimage(byte[] value)
         {
             image1 = value;
