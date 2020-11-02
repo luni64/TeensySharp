@@ -22,6 +22,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibUsbTree", "..\..\LibUsbT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Print&Watch", "..\..\LibUsbTree\Examples\Print&Watch\Print&Watch.csproj", "{0A941A98-CFEC-41F5-A4A8-5334120E03FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatureReader", "Examples\TemperatureReader\TemperatureReader.csproj", "{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F} = {C7CB6E1B-7902-47FA-B2FD-63EA0519AF3F}
+		{BA5A474B-955F-47FF-9A0D-EB4B733AD7A0} = {BA5A474B-955F-47FF-9A0D-EB4B733AD7A0}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +59,10 @@ Global
 		{0A941A98-CFEC-41F5-A4A8-5334120E03FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A941A98-CFEC-41F5-A4A8-5334120E03FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A941A98-CFEC-41F5-A4A8-5334120E03FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +73,7 @@ Global
 		{A008DB64-75AD-4207-8930-C223D2336844} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{D43F33CC-DCF0-452B-833D-D4785528AFA3} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{0A941A98-CFEC-41F5-A4A8-5334120E03FF} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
+		{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {659FE2B3-5714-4395-9A9A-CB2171AA2A7A}
