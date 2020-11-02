@@ -1,5 +1,4 @@
 ﻿using lunOptics.libUsbTree;
-using lunOptics.libUsbTree.Implementation;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -21,10 +20,10 @@ namespace lunOptics.libTeensySharp.Implementation
 
         public int Serialnumber { get; private set; } = 0;
         public UsbType UsbType { get; private set; }
-    
+
         public List<string> Ports { get; } = new List<string>();
         public PJRC_Board BoardType { get; private set; }
-        
+
         public async Task<ErrorCode> ResetAsync(TimeSpan? timeout = null)
         {
             TimeSpan timeOut = timeout ?? TimeSpan.FromSeconds(6.5);
@@ -36,7 +35,7 @@ namespace lunOptics.libTeensySharp.Implementation
             {
                 if (hidHandle == null || hidHandle.IsInvalid) return ErrorCode.HidComError;
 
-                var boardDef = BoardDefinitions[BoardType];                
+                var boardDef = BoardDefinitions[BoardType];
                 var reportSize = boardDef.BlockSize + boardDef.DataOffset + 1;
 
                 var report = new byte[reportSize];
@@ -45,8 +44,19 @@ namespace lunOptics.libTeensySharp.Implementation
                 report[2] = 0xFF;
                 report[3] = 0xFF;
 
-                return hidWriteReport(hidHandle, report) ? ErrorCode.OK : ErrorCode.ResetError;
+                result = hidWriteReport(hidHandle, report) ? ErrorCode.OK : ErrorCode.ResetError;
             }
+
+            if (result != ErrorCode.OK) return result;
+
+            DateTime end = DateTime.Now + TimeSpan.FromMilliseconds(5000);
+
+            while (UsbType == UsbType.HalfKay && DateTime.Now < end)
+            {
+                await Task.Delay(10);
+            }            
+
+            return (DateTime.Now < end) ? ErrorCode.OK : ErrorCode.ResetError;
         }
         public async Task<ErrorCode> RebootAsync(TimeSpan? timeout = null)
         {
@@ -84,12 +94,12 @@ namespace lunOptics.libTeensySharp.Implementation
                 }
                 return (UsbType == UsbType.HalfKay) ? ErrorCode.OK : ErrorCode.RebootError;
             }
-            catch 
+            catch
             {
                 return ErrorCode.Unexpected;
             }
         }
-        public async Task<ErrorCode> UploadAsync(string hexFile, bool reboot = true, TimeSpan? timeout = null)
+        public async Task<ErrorCode> UploadAsync(string hexFile, IProgress<int> progress = null, bool reboot = true, TimeSpan? timeout = null)
         {
             TimeSpan timeOut = timeout ?? TimeSpan.FromSeconds(6.5);
             IFirmware firmware = new TeensyFirmware(hexFile);
@@ -113,13 +123,23 @@ namespace lunOptics.libTeensySharp.Implementation
                 else
                 {
                     uint addr = 0;
-                    foreach (byte[] dataBlock in firmware.Getimage().Batch((int)boardDef.BlockSize).ToArray())   //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
+
+                    var blocks = firmware.Getimage()
+                        .Batch((int)boardDef.BlockSize)
+                        //   .Where((b, idx) => idx == 0 || !b.All(d => d == 0xFF))
+                        .ToArray();
+
+                    double delta = 100.0 / blocks.Where((b, idx) => idx == 0 || !b.All(d => d == 0xFF)).Count();
+                    double p = delta;
+
+                    // foreach (byte[] block in firmware.Getimage().Batch((int)boardDef.BlockSize).ToArray())   //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
+                    foreach (byte[] block in blocks)   //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
                     {
-                        if (addr == 0 || !dataBlock.All(d => d == 0xFF))        //skip empty blocks but always write first block to erase chip
+                        if (addr == 0 || !block.All(d => d == 0xFF))        //skip empty blocks but always write first block to erase chip
                         {
                             Array.Clear(report, 0, report.Length);
                             BitConverter.GetBytes(addr).CopyTo(report, 1);      // Address starts at report[1] (report[0] = hid report number (0))
-                            dataBlock.CopyTo(report, boardDef.DataOffset + 1);  // Copy datablock into report 
+                            block.CopyTo(report, boardDef.DataOffset + 1);  // Copy datablock into report 
 
                             if (hidWriteReport(hidHandle, report))              //if write fails (happens if teensy still busy) wait and retry once
                             {
@@ -131,6 +151,8 @@ namespace lunOptics.libTeensySharp.Implementation
                                 }
                             }
                             await Task.Delay(addr == 0 ? 100 : 1); // First block needs more time since it erases the complete chip
+                            progress?.Report((int)p);
+                            p += delta;
                         }
                         addr += boardDef.BlockSize;
                     }
@@ -141,6 +163,8 @@ namespace lunOptics.libTeensySharp.Implementation
             {
                 result = await ResetAsync(timeOut);
             }
+
+            progress?.Report(100);
             return result;
         }
         public ErrorCode Reboot(TimeSpan? timeout = null)
@@ -151,13 +175,20 @@ namespace lunOptics.libTeensySharp.Implementation
         }
         public ErrorCode Reset(TimeSpan? timeout = null)
         {
-            var task = ResetAsync(timeout);
-            task.Wait();
-            return task.Result;
+            ErrorCode result = ErrorCode.OK;
+            Task.Run(async () =>
+            {
+                result = await ResetAsync(timeout);
+            });
+
+
+            return result;
+
+
         }
         public ErrorCode Upload(string hexFile, bool reboot = true, TimeSpan? timeout = null)
         {
-            var task = UploadAsync(hexFile, reboot, timeout);
+            var task = UploadAsync(hexFile, null, reboot, timeout);
             task.Wait();
             return task.Result;
         }
@@ -179,7 +210,7 @@ namespace lunOptics.libTeensySharp.Implementation
         internal static bool IsTeensy(InfoNode info)
         {
             return info?.vid == PjrcVid && info.pid >= Teensy.PjrcMinPid && info.pid <= Teensy.PjRcMaxPid;
-        } 
+        }
         protected static int getSerialnumber(InfoNode info)
         {
             return info?.pid == HalfKayPid ? Convert.ToInt32(info.serNumStr, 16) * 10 : Convert.ToInt32(info.serNumStr, 10);
@@ -264,8 +295,8 @@ namespace lunOptics.libTeensySharp.Implementation
             {
                 Description = $"({Mi}) - {ClassDescription} " + (UsbType == UsbType.Serial ? $"({Ports[0]})" : "");
             }
-          
-            if(UsbType == UsbType.COMPOSITE)
+
+            if (UsbType == UsbType.COMPOSITE)
             {
                 Ports.Clear();
                 foreach (Teensy function in functions.OfType<Teensy>().Where(f => f.UsbType == UsbType.Serial))
@@ -307,7 +338,7 @@ namespace lunOptics.libTeensySharp.Implementation
             public uint FlashSize;
             public uint BlockSize;
             public uint DataOffset;
-            public string MCU;         
+            public string MCU;
         }
         protected static readonly Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
         {
