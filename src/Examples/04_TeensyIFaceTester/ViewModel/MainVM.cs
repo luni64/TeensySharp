@@ -1,5 +1,4 @@
-﻿using libTeensySharp.Implementation;
-using lunOptics.libTeensySharp;
+﻿using lunOptics.libTeensySharp;
 using lunOptics.libUsbTree;
 using System;
 using System.Collections.ObjectModel;
@@ -11,27 +10,24 @@ using System.Threading;
 namespace ViewModel
 {
     public sealed class MainVM : IDisposable
-    {
-        //public ReadOnlyObservableCollection<UsbDevice> devices { get; }
-        public ReadOnlyObservableCollection<UsbDevice> roots { get; }
-        public ReadOnlyObservableCollection<UsbDevice> list { get; }
+    {       
+        public ReadOnlyObservableCollection<IUsbDevice> roots { get; }
+        public ReadOnlyObservableCollection<IUsbDevice> list { get; }
 
         public MainVM()
-        {
-            factory = new TeensyFactory();
-            tree = new UsbTree( factory, SynchronizationContext.Current);
-            roots = new ReadOnlyObservableCollection<UsbDevice>(tree.DeviceTree.children);
-            list = new ReadOnlyObservableCollection<UsbDevice>(tree.DeviceList);
+        {            
+            tree = new UsbTree(new TeensyFactory(), SynchronizationContext.Current);
+            roots = new ReadOnlyObservableCollection<IUsbDevice>(tree.DeviceTree.children);
+            list = new ReadOnlyObservableCollection<IUsbDevice>(tree.DeviceList);
 
             cmdReboot = new RelayCommand(doReboot);
             cmdReset = new RelayCommand(doReset);
             cmdUpload = new RelayCommand(doUpload);
         }
 
-        public Teensy foundTeensy { get; }
+        public ITeensy foundTeensy { get; }
 
-        private TeensyFactory factory;
-
+        
         private readonly UsbTree tree;
 
         public void Dispose()
@@ -42,7 +38,7 @@ namespace ViewModel
         public RelayCommand cmdUpload { get; }
         async void doUpload(object o)
         {
-            var teensy = list.OfType<Teensy>().FirstOrDefault();
+            var teensy = list.OfType<ITeensy>().FirstOrDefault();
             if (teensy != null)
             {
                 Debug.WriteLine("Uploading to " +teensy?.Description);
@@ -55,7 +51,7 @@ namespace ViewModel
 
         async void doReboot(object o)
         {
-            var teensy = list.OfType<Teensy>().FirstOrDefault();
+            var teensy = list.OfType<ITeensy>().FirstOrDefault();
             if (teensy != null)
             {
                 Debug.WriteLine("Rebooting " + teensy?.Description);
@@ -67,7 +63,7 @@ namespace ViewModel
         public RelayCommand cmdReset { get; }
         async void doReset(object o)
         {
-            var teensy = list.OfType<Teensy>().FirstOrDefault();
+            var teensy = list.OfType<ITeensy>().FirstOrDefault();
             if (teensy != null)
             {
                 Debug.WriteLine("Resetting " + teensy?.Description);

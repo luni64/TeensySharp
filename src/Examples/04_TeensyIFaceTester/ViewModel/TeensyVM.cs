@@ -1,7 +1,5 @@
 ﻿using lunOptics.libTeensySharp;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ViewModel
 {
@@ -31,24 +29,24 @@ namespace ViewModel
             }
         }
 
-        public String UsbType
-        {
-            get
-            {
-                String s = Model.UsbType.ToString();
-                //if(model.UsbType != UsbTypes.unknown && model.UsbType != UsbTypes.disconnected && model.UsbType != UsbTypes.HalfKay)
-                if(Model.UsbSubType != UsbSubType.none)
-                {
-                    s += $" ({Model.UsbSubType.ToString()})";
-                }
-                if(Model.UsbType == lunOptics.libTeensySharp.UsbType.Serial)
-                {
-                    s += $" on {Model.Port}";
-                }
-                return s;
+        //public String UsbType
+        //{
+        //    get
+        //    {
+        //        String s = Model.UsbType.ToString();
+        //        //if(model.UsbType != UsbTypes.unknown && model.UsbType != UsbTypes.disconnected && model.UsbType != UsbTypes.HalfKay)
+        //        if(Model.UsbSubType != UsbSubType.none)
+        //        {
+        //            s += $" ({Model.UsbSubType.ToString()})";
+        //        }
+        //        if(Model.UsbType == lunOptics.libTeensySharp.UsbType.Serial)
+        //        {
+        //            s += $" on {Model.Port}";
+        //        }
+        //        return s;
 
-            }
-        }
+        //    }
+        //}
 
         public bool isNotHalfKay => Model.UsbType != lunOptics.libTeensySharp.UsbType.HalfKay;
 
