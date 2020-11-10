@@ -10,6 +10,9 @@ namespace TemperatureReader
         public MainWindow()
         {
             InitializeComponent();      
-        }
+
+            var vm = DataContext as MainVM;
+            Closing += vm.OnWindowClosing;
+        }       
     }
 }

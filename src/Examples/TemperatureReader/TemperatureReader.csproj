@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="firmware\.vsteensy\build\T40\TempMon_T40.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="firmware\.vsteensy\build\T41\TempMon_T41.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.3.3" />
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
     <PackageReference Include="ScottPlot.WPF" Version="4.0.42" />
@@ -15,17 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\TeensySharp\TeensySharp.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="firmware\TemMon4.hex">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="firmware\TempMon4_0.hex">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="firmware\TempMon4_1.hex">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+ 
 
 </Project>

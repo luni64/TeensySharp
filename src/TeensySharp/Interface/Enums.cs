@@ -11,6 +11,8 @@ namespace lunOptics.libTeensySharp
         ResetError,
         HidComError,
         Upload_Timeout,
+        SerialBlocked,
+        NoSerial,
         Unexpected,
 
     }

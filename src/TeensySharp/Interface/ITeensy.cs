@@ -19,5 +19,7 @@ namespace lunOptics.libTeensySharp
         Task<ErrorCode> ResetAsync(TimeSpan? timeout = null);      
         Task<ErrorCode> RebootAsync(TimeSpan? timeout = null);        
         Task<ErrorCode> UploadAsync(string hexFile, IProgress<int> progress = null, bool reboot = true, TimeSpan? timeout = null);
+        
+        ErrorCode CheckPort();
     }
 }

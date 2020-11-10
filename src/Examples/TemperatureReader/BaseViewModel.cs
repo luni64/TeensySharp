@@ -26,18 +26,12 @@ namespace ViewModel
 
         public void OnPropertyChanged([CallerMemberName] string name = "")
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-
 
         #endregion
 
     
-
         public class RelayCommand : ICommand
         {
             #region Fields
@@ -54,9 +48,7 @@ namespace ViewModel
 
             public RelayCommand(Action<object> execute, Predicate<object> canExecute)
             {
-                if (execute == null) throw new ArgumentNullException("execute");
-
-                _execute = execute;
+                _execute = execute ?? throw new ArgumentNullException("execute");
                 _canExecute = canExecute;
             }
             #endregion // Constructors
@@ -66,7 +58,7 @@ namespace ViewModel
             [DebuggerStepThrough]
             public bool CanExecute(object parameter)
             {
-                return _canExecute == null ? true : _canExecute(parameter);
+                return _canExecute == null || _canExecute(parameter);
             }
             public event EventHandler CanExecuteChanged
             {
@@ -121,7 +113,7 @@ namespace ViewModel
 
             protected virtual void OnCanExecuteChanged()
             {
-                if (CanExecuteChanged != null) CanExecuteChanged(this, new EventArgs());
+                CanExecuteChanged?.Invoke(this, new EventArgs());
             }
         }
 
