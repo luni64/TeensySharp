@@ -19,6 +19,7 @@ namespace lunOptics.libTeensySharp
 
     public enum PJRC_Board
     {
+        T_MM,
         T4_1,
         T4_0,
         T3_6,

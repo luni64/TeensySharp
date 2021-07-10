@@ -307,6 +307,7 @@ namespace lunOptics.libTeensySharp.Implementation
                         case 0x0277: BoardType = PJRC_Board.T3_6; break;
                         case 0x0279: BoardType = PJRC_Board.T4_0; break;
                         case 0x0280: BoardType = PJRC_Board.T4_1; break;
+                        case 0x0281: BoardType = PJRC_Board.T_MM; break;
                         default: BoardType = PJRC_Board.unknown; break;
                     }
                 }
@@ -372,6 +373,14 @@ namespace lunOptics.libTeensySharp.Implementation
         }
         protected static readonly Dictionary<PJRC_Board, BoardDefinition> BoardDefinitions = new Dictionary<PJRC_Board, BoardDefinition>()
         {
+            { PJRC_Board.T_MM, new BoardDefinition
+            {
+                MCU =       "IMXRT1062",
+                FlashSize = 8192 * 1024,
+                BlockSize = 1024,
+                DataOffset= 64,
+            }},
+
             { PJRC_Board.T4_1, new BoardDefinition
             {
                 MCU =       "IMXRT1062",
