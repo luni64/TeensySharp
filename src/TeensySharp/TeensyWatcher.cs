@@ -133,8 +133,15 @@ namespace TeensySharp
             uint pid = Convert.ToUInt32(DeviceIdParts[1].Substring(start, 4), 16);
             if (pid == serPid)
             {
-                uint serNum = Convert.ToUInt32(DeviceIdParts[2]);
-                string port = (((string)mgmtObj["Caption"]).Split("()".ToArray()))[1];
+                string port = null;
+                uint serNum = 0;
+                //uint serNum = Convert.ToUInt32(DeviceIdParts[2]);
+             
+                if ((string)mgmtObj["PNPClass"] == "Ports")
+                {
+                     port = (((string)mgmtObj["Caption"]).Split("()".ToArray()))[1];
+                }
+                else return null;
 
                 PJRC_Board board;
                 var hwid = ((string[])mgmtObj["HardwareID"])[0];

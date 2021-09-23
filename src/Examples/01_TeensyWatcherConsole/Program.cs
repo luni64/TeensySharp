@@ -26,7 +26,7 @@ namespace TeensyWatcherConsole
             // Here is a good place to construct a SerialPort Object
             // For the sake of simplicity lets take the first one from the list
             var myTeensy = Watcher.ConnectedDevices.FirstOrDefault();
-            if (myTeensy != null && myTeensy.UsbType == USB_Device.USBtype.UsbSerial)
+            if (myTeensy != null && myTeensy.UsbType == USB_Device.USBtype.UsbSerial && myTeensy.Port != null)
             {
                 using (var Com = new SerialPort(myTeensy.Port))
                 {
