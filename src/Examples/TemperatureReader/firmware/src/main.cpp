@@ -1,6 +1,6 @@
 #include "Arduino.h"
 
-extern "C" uint32_t set_arm_clock(uint32_t frequency); 
+extern "C" uint32_t set_arm_clock(uint32_t frequency);
 
 void setup()
 {
@@ -11,6 +11,9 @@ elapsedMillis stopwatch;
 
 void loop()
 {
+    
+
+
     if (Serial.available() > 0)
     {
         String cmd = Serial.readStringUntil('\n');

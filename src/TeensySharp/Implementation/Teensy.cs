@@ -302,6 +302,7 @@ namespace lunOptics.libTeensySharp.Implementation
                             case 0xFF9C_0022: BoardType = PJRC_Board.T3_6; break;
                             case 0xFF9C_0024: BoardType = PJRC_Board.T4_0; break;
                             case 0xFF9C_0025: BoardType = PJRC_Board.T4_1; break;
+                            case 0xFF9C_0026: BoardType = PJRC_Board.T_MM; break;
 
                             default: BoardType = PJRC_Board.unknown; break;
                         };

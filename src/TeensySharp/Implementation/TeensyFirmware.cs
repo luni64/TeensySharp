@@ -5,16 +5,16 @@ using System.Linq;
 using static System.Globalization.CultureInfo;
 
 
-namespace lunOptics.libTeensySharp.Implementation
+namespace lunOptics.libTeensySharp
 {
-    internal class TeensyFirmware : IFirmware
+    public class TeensyFirmware : IFirmware
     {
         #region construction -----------------------------------------------------------
-        internal TeensyFirmware(TextReader hexStream)
+        public TeensyFirmware(TextReader hexStream)
         {
             ParseStream(hexStream);
         }
-        internal TeensyFirmware(String filename)
+        public TeensyFirmware(String filename)
         {
             if (File.Exists(filename))
             {
