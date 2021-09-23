@@ -125,7 +125,7 @@ namespace lunOptics.libTeensySharp.Implementation
 
             var boardDef = BoardDefinitions[BoardType];
             var report = new byte[boardDef.BlockSize + boardDef.DataOffset + 1];
-
+            
             using (var hidHandle = getFileHandle(interfaces[0].DeviceInstanceID))   // open communication channel to the bootloader
             {
                 if (hidHandle == null || hidHandle.IsInvalid)
@@ -141,28 +141,40 @@ namespace lunOptics.libTeensySharp.Implementation
                     double progressDelta = 100.0 / blocks.Where((b, idx) => idx == 0 || !b.All(d => d == 0xFF)).Count();
                     double p = progressDelta;
 
-                    
-
                     uint addr = 0;
                     foreach (byte[] block in blocks)   //Slice the flash image in dataBlocks and transfer the blocks if they are not empty (!=0xFF)
                     {
-                        if (addr == 0 || !block.All(d => d == 0xFF))        //skip empty blocks but always write first block to erase chip
+                        if (addr == 0 || !block.All(d => d == 0xFF))          // skip empty blocks but always write first block to erase chip
                         {
-                            Trace.WriteLine($"Upload block at {addr}");
+                            Trace.Write($"Upload block at {addr} ");
                             Array.Clear(report, 0, report.Length);
-                            BitConverter.GetBytes(addr).CopyTo(report, 1);      // Address starts at report[1] (report[0] = hid report number (0))
-                            block.CopyTo(report, boardDef.DataOffset + 1);  // Copy datablock into report 
+                            BitConverter.GetBytes(addr).CopyTo(report, 1);   // Address starts at report[1] (report[0] = hid report number (0))
+                            block.CopyTo(report, boardDef.DataOffset + 1);   // Copy datablock into report 
+                            block.CopyTo(report, boardDef.DataOffset + 1);   // Copy datablock into report 
 
-                            if (hidWriteReport(hidHandle, report))              //if write fails (happens if teensy still busy) wait and retry once
+                            bool OK = false;
+                            if (!hidWriteReport(hidHandle, report))           // if write fails (happens if teensy still busy) wait and retry 10 times max
                             {
-                                await Task.Delay(10);
-                                if (!hidWriteReport(hidHandle, report))
+                                for (int i = 0; i < 10; i++)
+                                {
+                                    Trace.Write($"retry {i} ");
+                                    await Task.Delay(10);
+                                    if (hidWriteReport(hidHandle, report))
+                                    {
+                                        OK = true;
+                                        break;
+                                    }
+                                }
+                                if (!OK)
                                 {
                                     result = ErrorCode.Upload_Timeout;
+                                    Trace.WriteLine("upload failed ");
                                     break;
                                 }
                             }
-                            await Task.Delay(addr == 0 ? 100 : 1); // First block needs more time since it erases the complete chip
+                            Trace.WriteLine("OK");
+
+                            await Task.Delay(addr == 0 ? 500 : 1); // First block needs more time since it erases the complete chip
                             progress?.Report((int)p);
                             p += progressDelta;
                         }
@@ -221,7 +233,7 @@ namespace lunOptics.libTeensySharp.Implementation
             {
                 if (e is System.UnauthorizedAccessException)
                     result = ErrorCode.SerialBlocked;
-                else 
+                else
                     result = ErrorCode.Unexpected;
             }
             finally
@@ -253,7 +265,7 @@ namespace lunOptics.libTeensySharp.Implementation
         protected static uint SerEmuUsageID => 0xFFC9_0004;
         protected static uint RawHidUsageID => 0xFFAB_0200;
         protected void doUpdate(InfoNode info)
-        {            
+        {
             base.update(info);
 
             if (ClassGuid == GUID_DEVCLASS.HIDCLASS) UsbType = UsbType.HID;
@@ -334,7 +346,7 @@ namespace lunOptics.libTeensySharp.Implementation
                 {
                     Ports.Add(function.Ports.FirstOrDefault() ?? "??");
                 }
-            }           
+            }
             OnPropertyChanged("");  // update all properties
         }
 
