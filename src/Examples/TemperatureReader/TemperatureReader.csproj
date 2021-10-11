@@ -16,13 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="libTeensySharp" Version="0.9.1-beta" />
     <PackageReference Include="MahApps.Metro" Version="2.3.3" />
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
     <PackageReference Include="ScottPlot.WPF" Version="4.0.42" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\TeensySharp\TeensySharp.csproj" />
   </ItemGroup>
  
 

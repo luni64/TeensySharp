@@ -115,9 +115,12 @@ namespace lunOptics.libTeensySharp.Implementation
 
             Trace.WriteLine($"Firmware type {firmware.boardType} Board type: {BoardType}");
 
+            PJRC_Board boardType;
+            if (BoardType == PJRC_Board.T4_1 || BoardType == PJRC_Board.T_MM) boardType = PJRC_Board.T4_0;
+            else boardType = BoardType;
             // T4.1 and T4.0 have identical firmware
-            var boardType = (BoardType == PJRC_Board.T4_1) ? PJRC_Board.T4_0 : BoardType;
-            if (firmware.boardType != boardType) return ErrorCode.Upload_FirmwareMismatch;
+            //var boardType = (BoardType == PJRC_Board.T4_1) ? PJRC_Board.T4_0 : BoardType;
+            //if (firmware.boardType != boardType) return ErrorCode.Upload_FirmwareMismatch;
 
             var result = await RebootAsync(timeout);    // try to start the bootloader
             if (result != ErrorCode.OK) return result;
