@@ -29,7 +29,7 @@ namespace Firmware_Upload_Console
             if (teensy != null)
             {
                 var firmware = Path.Combine(Path.GetTempPath(), "MRKIV.hex"); 
-                var result = teensy.Upload(firmware, reboot: true);
+                var result = teensy.UploadAsync(firmware, reboot: true);
                 WriteLine(result);
             }
 

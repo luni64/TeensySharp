@@ -8,7 +8,7 @@ namespace ViewModel
         public RelayCommand cmdReboot { get; }
         private void doReboot(object o)
         {
-            Model.Reboot();
+            Model.RebootAsync();
         }
 
         public String SerialNumber => $"SN: {Model.Serialnumber.ToString(System.Globalization.CultureInfo.InvariantCulture)}";

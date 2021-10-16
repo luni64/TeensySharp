@@ -32,7 +32,7 @@ namespace WinForms_Test
             this.btnReset = new System.Windows.Forms.Button();
             this.lbTeensies = new System.Windows.Forms.ListBox();
             this.btnBoot = new System.Windows.Forms.Button();
-            this.lbHexfile = new System.Windows.Forms.TextBox();
+            this.tbHexfile = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -72,10 +72,10 @@ namespace WinForms_Test
             // 
             // lbHexfile
             // 
-            this.lbHexfile.Location = new System.Drawing.Point(12, 315);
-            this.lbHexfile.Name = "lbHexfile";
-            this.lbHexfile.Size = new System.Drawing.Size(191, 23);
-            this.lbHexfile.TabIndex = 3;
+            this.tbHexfile.Location = new System.Drawing.Point(12, 315);
+            this.tbHexfile.Name = "lbHexfile";
+            this.tbHexfile.Size = new System.Drawing.Size(191, 23);
+            this.tbHexfile.TabIndex = 3;
             // 
             // button1
             // 
@@ -133,7 +133,7 @@ namespace WinForms_Test
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.lbHexfile);
+            this.Controls.Add(this.tbHexfile);
             this.Controls.Add(this.btnBoot);
             this.Controls.Add(this.lbTeensies);
             this.Controls.Add(this.btnReset);
@@ -149,7 +149,7 @@ namespace WinForms_Test
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.ListBox lbTeensies;
         private System.Windows.Forms.Button btnBoot;
-        private System.Windows.Forms.TextBox lbHexfile;
+        private System.Windows.Forms.TextBox tbHexfile;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label1;

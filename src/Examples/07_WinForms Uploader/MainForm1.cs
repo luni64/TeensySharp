@@ -2,10 +2,9 @@
 using lunOptics.libTeensySharp;
 using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
 
 namespace WinForms_Test
 {
@@ -13,12 +12,10 @@ namespace WinForms_Test
     {
         TeensyWatcher watcher;
 
-      
-
         public MainForm1()
         {
             InitializeComponent();
-           
+
             watcher = new TeensyWatcher(SynchronizationContext.Current);
             watcher.ConnectedTeensies.CollectionChanged += ConnectedTeensiesChanged;
             foreach (var teensy in watcher.ConnectedTeensies)
@@ -27,25 +24,21 @@ namespace WinForms_Test
             }
             if (lbTeensies.Items.Count > 0) lbTeensies.SelectedIndex = 0;
         }
-
-             object old = null;
+                
         private void ConnectedTeensiesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
                     foreach (var teensy in e.NewItems)
-                    {
-                        bool b = old == teensy;
+                    {                     
                         lbTeensies.Items.Add(teensy);
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var teensy in e.OldItems)
-                    {
-                        old = teensy;
+                    {                      
                         lbTeensies.Items.Remove(teensy);
                     }
                     break;
@@ -65,9 +58,8 @@ namespace WinForms_Test
         private async void btnBoot_click(object sender, EventArgs e)
         {
             var teensy = lbTeensies.SelectedItem as ITeensy;
-          
             if (teensy != null)
-            {                
+            {
                 await teensy.RebootAsync();
             }
         }
@@ -77,15 +69,13 @@ namespace WinForms_Test
             var teensy = lbTeensies.SelectedItem as ITeensy;
             if (teensy != null)
             {
-                string filename = lbHexfile.Text;
+                string filename = tbHexfile.Text;
                 if (File.Exists(filename))
-                {                    
-                    IProgress<int> p = new Progress<int>(v => progressBar.Value = v);
-                    progressBar.Visible = true;                    
-
-                    var result = await teensy.UploadAsync(filename,p);
-
-                    MessageBox.Show(result.ToString(), "Message",MessageBoxButtons.OK, MessageBoxIcon.Information);
+                {
+                    var progress = new Progress<int>(v => progressBar.Value = v);
+                    progressBar.Visible = true;
+                    var result = await teensy.UploadAsync(filename, progress);
+                    MessageBox.Show(result.ToString(), "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     progressBar.Visible = false;
                     progressBar.Value = 0;
                 }
@@ -93,28 +83,21 @@ namespace WinForms_Test
             }
         }
 
-
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            var fileContent = string.Empty;
-            var filePath = string.Empty;
-
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "hex files (*.hex)|*.hex|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 0;
-                openFileDialog.RestoreDirectory = false;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    lbHexfile.Text = openFileDialog.FileName;
+                    tbHexfile.Text = openFileDialog.FileName;
 
-                    var fw = new TeensyFirmware(lbHexfile.Text);
-                    lblFWType.Text = "Firmware type: "+  fw.boardType.ToString();
+                    var fw = new TeensyFirmware(tbHexfile.Text);
+                    lblFWType.Text = "Firmware type: " + fw.boardType.ToString();
                 }
             }
         }
-
-      
     }
 }
