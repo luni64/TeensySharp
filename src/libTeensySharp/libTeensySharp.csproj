@@ -16,7 +16,7 @@
   
   <ItemGroup>
     <PackageReference Include="morelinq" Version="3.3.2" />
-    <PackageReference Include="SerialPortStream" Version="2.2.2" />   
+    <PackageReference Include="SerialPortStream" Version="2.3.1" />   
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
