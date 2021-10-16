@@ -7,11 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{FF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeensyIFaceTester", "Examples\04_TeensyIFaceTester\TeensyIFaceTester.csproj", "{D43F33CC-DCF0-452B-833D-D4785528AFA3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureReader", "Examples\TemperatureReader\TemperatureReader.csproj", "{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureReader_WPF", "Examples\TemperatureReader\TemperatureReader_WPF.csproj", "{BFAC91D0-4DC6-41A8-B063-358AAEC1FF56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Print&Watch", "Examples\Print&Watch\Print&Watch.csproj", "{B8817070-E10D-4B22-AA9C-5624425CA743}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Print and Watch (Console)", "Examples\Print&Watch\Print and Watch (Console).csproj", "{B8817070-E10D-4B22-AA9C-5624425CA743}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinForms Test", "Examples\WinForms Test\WinForms Test.csproj", "{50ED1453-AC65-4F03-8516-B56F1F36F280}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinForms Uploader", "Examples\WinForms Test\WinForms Uploader.csproj", "{50ED1453-AC65-4F03-8516-B56F1F36F280}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firmware Upload Console", "Examples\Firmware Upload Console\Firmware Upload Console.csproj", "{8031540F-07FD-4C91-8FBB-7EB9BBB2B163}"
 EndProject

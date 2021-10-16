@@ -171,10 +171,10 @@ namespace lunOptics.libTeensySharp.Implementation
                             bool OK = false;
                             if (!hidWriteReport(hidHandle, report))           // if write fails (happens if teensy still busy) wait and retry 10 times max
                             {
-                                for (int i = 0; i < 10; i++)
+                                for (int i = 0; i < 20; i++)
                                 {
                                     Trace.Write($"retry {i} ");
-                                    await Task.Delay(10);
+                                    await Task.Delay(100);
                                     if (hidWriteReport(hidHandle, report))
                                     {
                                         OK = true;
