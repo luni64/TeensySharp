@@ -1,0 +1,20 @@
+﻿[*.cs]
+
+
+# IDE0017: Simplify object initialization
+dotnet_style_object_initializer = none
+
+# CA1707: Remove the underscores from member name lunOptics.UsbTree.Implementation.DIREG.DIREG_DEV.
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1307: Specify StringComparison
+dotnet_diagnostic.CA1307.severity = none
+
+# CA1304: Specify CultureInfo
+dotnet_diagnostic.CA1304.severity = none
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = none
+
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none

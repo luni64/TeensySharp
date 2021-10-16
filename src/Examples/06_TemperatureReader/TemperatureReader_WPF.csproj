@@ -1,0 +1,204 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="firmware\.vsteensy\build\T40\TempMon_T40.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="firmware\.vsteensy\build\T41\TempMon_T41.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="firmware\.vsteensy\build\TMM\core.a" />
+    <None Include="firmware\.vsteensy\build\TMM\core\analog.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\analog.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\AudioStream.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\AudioStream.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\bootdata.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\bootdata.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\clockspeed.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\clockspeed.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\CrashReport.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\CrashReport.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\debugprintf.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\debugprintf.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\delay.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\delay.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\digital.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\digital.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\DMAChannel.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\DMAChannel.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\eeprom.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\eeprom.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\EventResponder.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\EventResponder.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\extmem.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\extmem.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\fuse.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\fuse.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial1.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial1.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial2.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial2.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial3.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial3.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial4.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial4.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial5.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial5.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial6.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial6.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial7.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial7.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial8.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\HardwareSerial8.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\interrupt.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\interrupt.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\IntervalTimer.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\IntervalTimer.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\IPAddress.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\IPAddress.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\keylayouts.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\keylayouts.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\libc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\libc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\main.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\main.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\memcpy-armv7m.s.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\memcpy-armv7m.s.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\memset.s.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\memset.s.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\new.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\new.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\nonstd.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\nonstd.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Print.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Print.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\pwm.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\pwm.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\rtc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\rtc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent1.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent1.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent2.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent2.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent3.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent3.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent4.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent4.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent5.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent5.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent6.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent6.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent7.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent7.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent8.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEvent8.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEventUSB1.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEventUSB1.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEventUSB2.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\serialEventUSB2.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_alloc_valid.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_alloc_valid.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_calloc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_calloc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_free.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_free.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_hash.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_hash.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_malloc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_malloc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_malloc_stats.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_malloc_stats.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_pool.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_pool.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_realloc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_realloc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_realloc_i.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_realloc_i.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_realloc_move.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_realloc_move.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_szalloc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_szalloc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_util.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_util.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_zalloc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\sm_zalloc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\startup.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\startup.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Stream.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Stream.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\tempmon.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\tempmon.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Time.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Time.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Tone.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\Tone.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_audio.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_audio.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_desc.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_desc.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_flightsim.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_flightsim.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_inst.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_inst.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_joystick.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_joystick.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_keyboard.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_keyboard.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_midi.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_midi.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_mouse.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_mouse.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_mtp.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_mtp.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_rawhid.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_rawhid.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_seremu.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_seremu.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_serial.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_serial.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_serial2.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_serial2.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_serial3.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_serial3.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_touch.c.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\usb_touch.c.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\WMath.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\WMath.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\WString.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\WString.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\core\yield.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\core\yield.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\src\main.cpp.d" />
+    <None Include="firmware\.vsteensy\build\TMM\src\main.cpp.o" />
+    <None Include="firmware\.vsteensy\build\TMM\TempMon_TMM.elf" />
+    <None Include="firmware\.vsteensy\build\TMM\TempMon_TMM.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="firmware\.vsteensy\build\TMM\TempMon_TMM.lst" />
+    <None Include="firmware\.vsteensy\build\TMM\TempMon_TMM.sym" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro" Version="2.3.3" />
+    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+    <PackageReference Include="ScottPlot.WPF" Version="4.0.42" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libTeensySharp\libTeensySharp.csproj" />
+  </ItemGroup>
+ 
+
+</Project>

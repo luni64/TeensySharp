@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net46</TargetFrameworks>
+    <RootNamespace>lunOptics.LibUsbTree</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <Authors>Lutz Niggl</Authors>
+    <Company>lunOptics</Company>
+    <Copyright>lunOptics</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/luni64/LibUsbTree</PackageProjectUrl>
+    <PackageTags>USB UsbDevices Cfgmgr32</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BetterWin32Errors" Version="0.2.0" />    
+    <PackageReference Include="morelinq" Version="3.3.2" />
+  </ItemGroup>
+
+</Project>
