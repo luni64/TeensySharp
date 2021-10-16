@@ -36,12 +36,6 @@
     <Reference Include="BetterWin32Errors, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\BetterWin32Errors.0.2.0\lib\net45\BetterWin32Errors.dll</HintPath>
     </Reference>
-    <Reference Include="libTeensySharp, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\libTeensySharp.0.9.1-beta\lib\net46\libTeensySharp.dll</HintPath>
-    </Reference>
-    <Reference Include="LibUsbTree, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\LibUsbTree.0.1.0-beta\lib\net46\LibUsbTree.dll</HintPath>
-    </Reference>
     <Reference Include="RJCP.SerialPortStream, Version=2.2.2.0, Culture=neutral, PublicKeyToken=5f5e7b70c6a74deb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SerialPortStream.2.2.2\lib\net45\RJCP.SerialPortStream.dll</HintPath>
     </Reference>
@@ -64,6 +58,16 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\libTeensySharp\libTeensySharp.csproj">
+      <Project>{352d83f7-b35e-478b-8d72-cf9a1bdf9976}</Project>
+      <Name>libTeensySharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libUsbTree\src\LibUsbTree.csproj">
+      <Project>{03b9ed44-35cd-4e33-b43b-95bf6f8271da}</Project>
+      <Name>LibUsbTree</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
