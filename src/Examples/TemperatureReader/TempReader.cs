@@ -106,7 +106,7 @@ namespace TemperatureReader
                     p.WriteLine("r   ");                                   // read current temperature (command r)
                     if (double.TryParse(p.ReadLine(), out double T))
                     {
-                        temperature = T;
+                        temperature = T/100.0;
                         OnPropertyChanged("temperature");
                     }
                     Task.Delay(50).Wait();

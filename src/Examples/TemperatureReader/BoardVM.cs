@@ -1,19 +1,14 @@
 ﻿using lunOptics.libTeensySharp;
-using MaterialDesignColors;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ViewModel;
-using System.Linq;
 using RJCP.IO.Ports;
-using System.Diagnostics;
+using System.Linq;
+using ViewModel;
 
 namespace TemperatureReader
 {
     class BoardVM : BaseViewModel
     {
         public string type { get; private set; }
-        public int serialNumber { get; private set; }
+        public uint serialNumber { get; private set; }
 
         public string description { get; private set; }
 
@@ -82,7 +77,7 @@ namespace TemperatureReader
                 {
                     resetable = true && !running;
                 }
-                if (resetable && (model.BoardType == PJRC_Board.T4_1 || model.BoardType == PJRC_Board.T4_0))
+                if (resetable && (model.BoardType == PJRC_Board.T4_1 || model.BoardType == PJRC_Board.T4_0 || model.BoardType == PJRC_Board.T_MM))
                 {
                     uploadable = true;
                 }
@@ -107,6 +102,7 @@ namespace TemperatureReader
             {
                 case PJRC_Board.T4_1: type = "T4.1"; break;
                 case PJRC_Board.T4_0: type = "T4.0"; break;
+                case PJRC_Board.T_MM: type = "TMM"; break;
                 case PJRC_Board.T3_6: type = "T3.6"; break;
                 case PJRC_Board.T3_5: type = "T3.5"; break;
                 case PJRC_Board.T3_2: type = "T3.2"; break;
@@ -141,9 +137,7 @@ namespace TemperatureReader
                     break;
             }
 
-            checkStatus();
-
-           
+            checkStatus();           
         }
          
        

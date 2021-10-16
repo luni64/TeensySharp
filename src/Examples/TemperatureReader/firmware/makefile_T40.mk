@@ -23,9 +23,9 @@ LIBS_SHARED      :=
 LIBS_LOCAL_BASE  := lib
 LIBS_LOCAL       :=
 
-CORE_BASE        := core
+CORE_BASE        := cores\teensy4
 GCC_BASE         := C:\toolchain\gcc\gcc-arm-none-eabi-5_4-2016q3-20160926-win32\bin
-UPL_PJRC_B       := 
+UPL_PJRC_B       :=
 UPL_TYCMD_B      := C:\toolchain\TyTools
 
 #******************************************************************************

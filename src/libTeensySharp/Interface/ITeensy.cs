@@ -7,7 +7,7 @@ namespace lunOptics.libTeensySharp
 {
     public interface ITeensy : IUsbDevice
     {
-        int Serialnumber { get; }
+        uint Serialnumber { get; }
         UsbType UsbType { get; }
 
         List<string> Ports { get; }

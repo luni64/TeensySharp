@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="libTeensySharp" Version="0.9.1-beta" />
+    <ProjectReference Include="..\..\libTeensySharp\libTeensySharp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace WinForms_Test
 {
@@ -12,10 +13,12 @@ namespace WinForms_Test
     {
         TeensyWatcher watcher;
 
+      
+
         public MainForm1()
         {
             InitializeComponent();
-
+           
             watcher = new TeensyWatcher(SynchronizationContext.Current);
             watcher.ConnectedTeensies.CollectionChanged += ConnectedTeensiesChanged;
             foreach (var teensy in watcher.ConnectedTeensies)
@@ -25,13 +28,16 @@ namespace WinForms_Test
             if (lbTeensies.Items.Count > 0) lbTeensies.SelectedIndex = 0;
         }
 
+             object old = null;
         private void ConnectedTeensiesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
                     foreach (var teensy in e.NewItems)
                     {
+                        bool b = old == teensy;
                         lbTeensies.Items.Add(teensy);
                     }
                     break;
@@ -39,6 +45,7 @@ namespace WinForms_Test
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var teensy in e.OldItems)
                     {
+                        old = teensy;
                         lbTeensies.Items.Remove(teensy);
                     }
                     break;
@@ -58,8 +65,9 @@ namespace WinForms_Test
         private async void btnBoot_click(object sender, EventArgs e)
         {
             var teensy = lbTeensies.SelectedItem as ITeensy;
+          
             if (teensy != null)
-            {
+            {                
                 await teensy.RebootAsync();
             }
         }

@@ -17,13 +17,13 @@ BOARD_ID         := TEENSY41
 
 MCU              := imxrt1062
 
-LIBS_SHARED_BASE := 
+LIBS_SHARED_BASE :=
 LIBS_SHARED      :=
 
 LIBS_LOCAL_BASE  := lib
 LIBS_LOCAL       :=
 
-CORE_BASE        := core
+CORE_BASE        := cores\teensy4
 GCC_BASE         := C:\toolchain\gcc\gcc-arm-none-eabi-5_4-2016q3-20160926-win32\bin
 UPL_PJRC_B       :=
 UPL_TYCMD_B      := C:\toolchain\TyTools
@@ -39,7 +39,7 @@ FLAGS_LSP   :=
 FLAGS_CPP   := -std=gnu++14 -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing
 FLAGS_C     :=
 FLAGS_S     := -x assembler-with-cpp
-FLAGS_LD    := -Wl,--print-memory-usage,--gc-sections,--relax,--defsym=__rtc_localtime=$(shell powershell [int](Get-Date -UFormat +%s)[0]) -T$(CORE_BASE)/imxrt1062.ld
+FLAGS_LD    := -Wl,--print-memory-usage,--gc-sections,--relax,--defsym=__rtc_localtime=$(shell powershell [int](Get-Date -UFormat +%s)[0]) -T$(CORE_BASE)/imxrt1062_t41.ld
 
 LIBS        := -larm_cortexM7lfsp_math -lm -lstdc++
 

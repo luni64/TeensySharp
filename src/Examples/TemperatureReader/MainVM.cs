@@ -50,7 +50,7 @@ namespace TemperatureReader
         public RelayCommand cmdReset { get; private set; }
         async void doReset(object o)
         {
-            int sn = selectedTeensy.Serialnumber;
+            uint sn = selectedTeensy.Serialnumber;
             msgQueue.Enqueue("Resetting...");
             var result = await selectedTeensy.ResetAsync(TimeSpan.FromSeconds(2));
             SelectedBoard = Boards.FirstOrDefault(b => b.serialNumber == sn);
@@ -78,12 +78,15 @@ namespace TemperatureReader
                 case PJRC_Board.T4_1:
                     hexFile = "firmware/.vsteensy/build/T41/TempMon_T41.hex";
                     break;
+                case PJRC_Board.T_MM:
+                    hexFile = "firmware/.vsteensy/build/Tmm/TempMon_TMM.hex";
+                    break;
                 default:
                     hexFile = null;
                     break;
             }
 
-            int sn = SelectedBoard.serialNumber;
+            uint sn = SelectedBoard.serialNumber;
             if (!String.IsNullOrEmpty(hexFile))
             {
                 //  var indicator = new Progress<int>(p => Message = p != 0 ? p.ToString() + "%" : "");
@@ -239,7 +242,7 @@ namespace TemperatureReader
             Trace.WriteLine($"MPS: {s.Description} {e.PropertyName}");
         }
 
-        int lastSn = 0;
+        uint lastSn = 0;
 
 
         async public void OnWindowClosing(object sender, CancelEventArgs e)
