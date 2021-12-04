@@ -174,11 +174,12 @@ namespace TemperatureReader
             SelectedBoard = Boards.FirstOrDefault();
             watcher.ConnectedTeensies.CollectionChanged += ConnectedTeensies_CollectionChanged;
 
-            plotControl = new WpfPlot();
-            plotControl.plt.Axis(x1: 0, x2: 500, y1: 30, y2: 70);
-            plotControl.Configure(lockHorizontalAxis: true);
-            plotControl.plt.PlotSignal(Temperatures);
-            plotControl.plt.YLabel("Temperature (°C)");
+            plotControl = new WpfPlot();            
+            plotControl.Plot.SetAxisLimits(xMin: 0, xMax: 500, yMin: 30, yMax: 70);
+            plotControl.Configuration.LockHorizontalAxis = true;// .Configure(lockHorizontalAxis: true);            
+            plotControl.Plot.AddSignal(Temperatures);
+            plotControl.Plot.YLabel("Temperature (°C)");
+            plotControl.Refresh();
         }
 
         double[] Temperatures = new double[500];

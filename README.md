@@ -1,9 +1,11 @@
 # This documentation is outdated and will be updated soon. Please use the Examples meanwhile
 # TeensySharp
 This library provides some helper classes for C# Windows applications which communicate to [PJRC Teensy](http://www.pjrc.com/teensy/index.html) boards. Currently the following common tasks are handled:
-- Finding all Teensies on the USB tree (get a list with entries for each found board containing its serial number and the name of the COM port to which it is connected)
+- Finding all Teensies on the USB tree. You get a list with entries for each found board containing its board type (e.g. Teensy 3.2, Teensy 4.1), its USB type (e.g. HID, Serial etc.) its serial number and the name of all virtual COM ports it exposes)
 - Provide information when a Teensy is connected or removed from the USB Tree
-- Uploading of firmware (iHex files) from within the user application.
+- Resetting a board
+- Starting the bootloader
+- Uploading of firmware (iHex files) from within your dotnet user application.
 
 # Installation
 
@@ -11,7 +13,7 @@ This library provides some helper classes for C# Windows applications which comm
 For easy installation TeensySharp is available as [nuget package](https://www.nuget.org/packages/lunoptics.TeensySharp/).
 
 # Build
-In case you don't want to include the nuget package you can of course include the sources in your project. TeensySharp was developed using Microsoft VisualStudio 2019 Community Edition. The correspondig .sln file is contained in the repo. The library depends on the HIDLibrary from Mike O'Brian which can be found here: [https://github.com/mikeobrien/HidLibrary](https://github.com/mikeobrien/HidLibrary) and on [MoreLINQ](https://morelinq.github.io/). Both are available as NuGet packages. A download of the binaries from NuGet should start automatically when you build the solution.
+In case you don't want to include the nuget package you can of course include the sources in your project. TeensySharp was developed using Microsoft VisualStudio 2019 Community Edition. The corresponding .sln file is contained in the repo. A download of dependencies from NuGet should start automatically when you build the solution.
 
 # Usage
 ## Finding Connected Teensies

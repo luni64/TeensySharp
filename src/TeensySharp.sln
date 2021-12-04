@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29102.190
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{FFFF08DC-3150-47F9-8016-0CF24B484076}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibUsbTree", "libUsbTree\src\LibUsbTree.csproj", "{03B9ED44-35CD-4E33-B43B-95BF6F8271DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libUsbTree", "libUsbTree\src\libUsbTree.csproj", "{03B9ED44-35CD-4E33-B43B-95BF6F8271DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libTeensySharp", "libTeensySharp\libTeensySharp.csproj", "{352D83F7-B35E-478B-8D72-CF9A1BDF9976}"
 EndProject
@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeensyWatcher", "TeensyWatcher\TeensyWatcher.csproj", "{05902873-1257-4CEF-972C-AAAEBC042F66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +54,10 @@ Global
 		{1AE9298B-40A8-4DBD-A226-AAE5497E691A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AE9298B-40A8-4DBD-A226-AAE5497E691A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AE9298B-40A8-4DBD-A226-AAE5497E691A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05902873-1257-4CEF-972C-AAAEBC042F66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05902873-1257-4CEF-972C-AAAEBC042F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05902873-1257-4CEF-972C-AAAEBC042F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05902873-1257-4CEF-972C-AAAEBC042F66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{792CA30D-508E-4AB5-99E4-E70E4F6BBF35} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{E34A4F16-2BF5-448D-A4C7-07EFDA232CE7} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{1AE9298B-40A8-4DBD-A226-AAE5497E691A} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
+		{05902873-1257-4CEF-972C-AAAEBC042F66} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {659FE2B3-5714-4395-9A9A-CB2171AA2A7A}

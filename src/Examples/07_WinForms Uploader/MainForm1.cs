@@ -61,7 +61,7 @@ namespace WinForms_Test
             if (teensy != null)
             {
                 await teensy.RebootAsync();
-            }
+            }           
         }
 
         private async void btnUpload_Click(object sender, EventArgs e)

@@ -1,20 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net48;net5.0</TargetFrameworks>
     <RootNamespace>libTeensySharp</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Lutz Niggl</Authors>
+    <Authors>luni64</Authors>
     <Company>lunOptics</Company>
-    <Version>0.9.1-beta</Version>
-    <Copyright>Lutz Niggl</Copyright>
+    <Version>1.0.0</Version>
+    <Copyright>luni64</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/luni64/TeensySharp</PackageProjectUrl>
-    <PackageTags>Teensy detect upload serial hid</PackageTags>
-    <NeutralLanguage>en-US</NeutralLanguage>    
+    <PackageTags>Teensy detect upload serial hid firmware</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageId>lunOptics.$(AssemblyName)</PackageId>
+    <RepositoryUrl>https://github.com/luni64/TeensySharp</RepositoryUrl>    
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="BetterWin32Errors" Version="0.2.0" />
+    <PackageReference Include="lunOptics.libUsbTree" Version="1.0.1" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="SerialPortStream" Version="2.3.1" />   
   </ItemGroup>
@@ -24,11 +28,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="System.IO.Ports" Version="4.7.0" />   
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\libUsbTree\src\LibUsbTree.csproj" />
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />   
   </ItemGroup>
 
 </Project>
