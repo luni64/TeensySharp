@@ -66,12 +66,12 @@ namespace lunOptics.libTeensySharp.Implementation
             }
             Trace.WriteLine($"Device appeared ({UsbType}) in {(DateTime.Now - start).TotalMilliseconds} ms");
 
-            return (DateTime.Now-start < timeOut) ? ErrorCode.OK : ErrorCode.ResetError;
+            return (DateTime.Now - start < timeOut) ? ErrorCode.OK : ErrorCode.ResetError;
         }
         public async Task<ErrorCode> RebootAsync(TimeSpan? timeout = null)
         {
             Trace.WriteLine($"Rebooting {Description}");
-            TimeSpan timeOut = timeout ?? TimeSpan.FromSeconds(6.5);            
+            TimeSpan timeOut = timeout ?? TimeSpan.FromSeconds(6.5);
             try
             {
                 if (UsbType == UsbType.HalfKay)
@@ -103,18 +103,18 @@ namespace lunOptics.libTeensySharp.Implementation
 
                 // wait until teensy appears as bootloader 
                 var start = DateTime.Now;
-                
+
                 Trace.WriteLine("Wait for halfkay");
                 while (UsbType != UsbType.HalfKay && DateTime.Now - start < timeOut)
                 {
                     await Task.Delay(100);
-                    Trace.WriteLine($"wait...{UsbType}");                   
+                    Trace.WriteLine($"wait...{UsbType}");
                 }
-                Trace.WriteLine($"HalfKay found {UsbType} in {(DateTime.Now - start).TotalMilliseconds} ms");                
+                Trace.WriteLine($"HalfKay found {UsbType} in {(DateTime.Now - start).TotalMilliseconds} ms");
 
                 return (UsbType == UsbType.HalfKay) ? ErrorCode.OK : ErrorCode.RebootError;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Trace.WriteLine(e.Message);
                 return ErrorCode.Unexpected;
@@ -122,6 +122,14 @@ namespace lunOptics.libTeensySharp.Implementation
         }
         public async Task<ErrorCode> UploadAsync(string hexFile, IProgress<int> progress = null, bool reboot = true, TimeSpan? timeout = null)
         {
+            Trace.WriteLine($"Board type: {BoardType}");
+            if (BoardType == PJRC_Board.unknown)
+            {
+                Trace.WriteLine("Start Bootloader to find information about the connected board");
+                var r = await RebootAsync(timeout);    // try to start the bootloader
+            }
+
+
             Trace.WriteLine($"Uploading: {hexFile} to {Description}");
             var timeOut = timeout ?? TimeSpan.FromSeconds(6.5);
             var firmware = new TeensyFirmware(hexFile);
@@ -133,6 +141,9 @@ namespace lunOptics.libTeensySharp.Implementation
             else boardType = BoardType;
             // T4.1 and T4.0 have identical firmware
             //var boardType = (BoardType == PJRC_Board.T4_1) ? PJRC_Board.T4_0 : BoardType;
+
+           
+
             if (firmware.boardType != boardType) return ErrorCode.Upload_FirmwareMismatch;
 
             var result = await RebootAsync(timeout);    // try to start the bootloader
@@ -287,7 +298,7 @@ namespace lunOptics.libTeensySharp.Implementation
         protected static uint getSerialnumber(InfoNode info)
         {
             if (info?.pid == HalfKayPid)
-            {                
+            {
                 UInt64 sn = Convert.ToUInt64(info.serNumStr, 16) * 10;
                 if (sn > 0xFFFF_FFFF) sn = 0xFFFF_FFFF;  // handle home brew boards with sn = 0xffffffff
                 return (UInt32)sn;
@@ -303,14 +314,16 @@ namespace lunOptics.libTeensySharp.Implementation
         protected static uint RawHidUsageID => 0xFFAB_0200;
         protected void doUpdate(InfoNode info)
         {
-           // Trace.WriteLine("update Teensy");
+            // Trace.WriteLine("update Teensy");
             base.update(info);
 
             if (ClassGuid == GUID_DEVCLASS.HIDCLASS) UsbType = UsbType.HID;
             else if (ClassGuid == GUID_DEVCLASS.USB) UsbType = UsbType.COMPOSITE;
+            else if (ClassGuid == GUID_DEVCLASS.MEDIA) UsbType = UsbType.Media;
             else if (ClassGuid == GUID_DEVCLASS.PORTS)
             {
                 UsbType = UsbType.Serial;
+                //Serialnumber = getSerialnumber(info);
                 Ports.Clear();
                 Match mPort = Regex.Match(Description, @".*\(([^)]+)\)", RegexOptions.IgnoreCase);
                 if (mPort.Success) Ports.Add(mPort.Groups[1].Value);
@@ -318,7 +331,7 @@ namespace lunOptics.libTeensySharp.Implementation
 
             else UsbType = UsbType.unknown;
 
-            if (!IsInterface && !IsUsbFunction)
+            if (!IsInterface && !IsUsbFunction )
             {
                 Serialnumber = getSerialnumber(info);
 

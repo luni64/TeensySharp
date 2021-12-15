@@ -14,7 +14,6 @@ namespace lunOptics.libTeensySharp
         SerialBlocked,
         NoSerial,
         Unexpected,
-
     }
 
     public enum PJRC_Board
@@ -58,7 +57,6 @@ namespace lunOptics.libTeensySharp
         Serial,
         unknown,
         COMPOSITE,
-    }
-
-   
+        Media,
+    }   
 }
