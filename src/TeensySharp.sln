@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeensyWatcher", "TeensyWatcher\TeensyWatcher.csproj", "{05902873-1257-4CEF-972C-AAAEBC042F66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "Examples\test\test.csproj", "{0D5DE73E-2FBA-41A3-9CFB-A3B762A3D028}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{05902873-1257-4CEF-972C-AAAEBC042F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05902873-1257-4CEF-972C-AAAEBC042F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05902873-1257-4CEF-972C-AAAEBC042F66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D5DE73E-2FBA-41A3-9CFB-A3B762A3D028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D5DE73E-2FBA-41A3-9CFB-A3B762A3D028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D5DE73E-2FBA-41A3-9CFB-A3B762A3D028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D5DE73E-2FBA-41A3-9CFB-A3B762A3D028}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{E34A4F16-2BF5-448D-A4C7-07EFDA232CE7} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{1AE9298B-40A8-4DBD-A226-AAE5497E691A} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 		{05902873-1257-4CEF-972C-AAAEBC042F66} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
+		{0D5DE73E-2FBA-41A3-9CFB-A3B762A3D028} = {FFFF08DC-3150-47F9-8016-0CF24B484076}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {659FE2B3-5714-4395-9A9A-CB2171AA2A7A}

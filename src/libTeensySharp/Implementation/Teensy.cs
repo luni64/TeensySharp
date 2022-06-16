@@ -182,7 +182,7 @@ namespace lunOptics.libTeensySharp.Implementation
                             bool OK = false;
                             if (!hidWriteReport(hidHandle, report))           // if write fails (happens if teensy still busy) wait and retry 10 times max
                             {
-                                for (int i = 0; i < 20; i++)
+                                for (int i = 0; i < 250; i++) 
                                 {
                                     Trace.Write($"retry {i} ");
                                     await Task.Delay(100);
@@ -195,7 +195,7 @@ namespace lunOptics.libTeensySharp.Implementation
                                 if (!OK)
                                 {
                                     result = ErrorCode.Upload_Timeout;
-                                    Trace.WriteLine("upload failed ");
+                                    Trace.WriteLine("upload failed, timeout writing block");
                                     break;
                                 }
                             }
